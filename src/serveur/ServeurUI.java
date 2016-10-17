@@ -30,6 +30,9 @@ import javax.swing.SwingConstants;
 
 import org.apache.log4j.Logger;
 
+import objet.ListeDesMatchs;
+import objet.Match;
+import objet.Paris;
 import test.RejectedExecutionHandlerImpl;
 
 /***
@@ -60,6 +63,11 @@ public class ServeurUI extends JFrame implements ActionListener {
 	public static void appendToTextArea(String text) {
 		textArea1.append(text);
 	}
+	
+	//Objet
+	private Match match;
+	private ListeDesMatchs listeDesMatchs;
+	private Paris paris;
 
 	// Liste des utilisateurs
 	ArrayList clientOutputStreams;
