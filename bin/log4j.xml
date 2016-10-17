@@ -1,18 +1,33 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
-<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
-	<!--APPENDERS -->
-	<appender name="stdout" class="org.apache.log4j.ConsoleAppender">
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/"
+	debug="false">
+
+	<!-- Premier Appender, journalise les messages INFO ERROR (donc DEBUG 
+		exclu) -->
+	<appender name="STDOUT" class="org.apache.log4j.ConsoleAppender">
 		<layout class="org.apache.log4j.PatternLayout">
-			<param name="ConversionPattern" value="%5p [%t] (%F:%L) -%m%n" />
+			<param name="ConversionPattern" value="%5p [%t] (%F:%L) - %m%n" />
+		</layout>
+		<filter class="org.apache.log4j.varia.LevelRangeFilter">
+			<param name="LevelMin" value="INFO" />
+		</filter>
+	</appender>
+
+	<!-- Deuxieme Appender, journalise les messages dans un fichier -->
+	<appender name="log.file" class="org.apache.log4j.RollingFileAppender">
+		<param name="file" value="log/mylogfile.log" />
+		<param name="Append" value="false" />
+		<param name="MaxFileSize" value="1000KB" />
+		<param name="MaxBackupIndex" value="1" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%d / %p / [%t] / %c / -%m%n" />
 		</layout>
 	</appender>
-	<!--CATEGORIES -->
-	<category name="org.edu.ff.cours.logger">
-		<priority value="DEBUG " />
-	</category>
-	<!--ROOT -->
+
 	<root>
-		<appender-ref ref="stdout" />
+		<priority value="DEBUG" />
+		<appender-ref ref="STDOUT" />
+		<appender-ref ref="log.file" />
 	</root>
 </log4j:configuration>
