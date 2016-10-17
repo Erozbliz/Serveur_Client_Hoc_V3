@@ -1,5 +1,8 @@
 package tools;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Random;
 
 /**
@@ -37,6 +40,16 @@ public final class Tools {
 		String is = String.valueOf(i);
 		user = user.concat(is);
 		return user;
+	}
+	
+	/**
+	 * 
+	 * @return la date actuelle au format string
+	 */
+	public static String currentStrDate(){
+		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+		Date date = new Date(); 
+		return dateFormat.format(date);
 	}
 
 }

@@ -1,7 +1,6 @@
 package objet;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -13,14 +12,14 @@ import java.util.List;
 public class Match {
 
 	private int numMatch;
-	private Date date;
+	private String date;
 	private String statusMatch;
 	private String nameEquipe1;
 	private String nameEquipe2;
 	private int butEquipe1;
 	private int butEquipe2;
-	private List<Date> listeButEquipe1;
-	private List<Date> listeButEquipe2;
+	private List<String> listeButEquipe1;
+	private List<String> listeButEquipe2;
 	private int penaltyEquipe1;
 	private int penaltyEquipe2;
 
@@ -31,7 +30,7 @@ public class Match {
 	* @param nameEquipe1 = le nom de l'équipe 1
 	* @param nameEquipe2 = le nom de l'équipe 2
 	*/
-	public Match(int numMatch, Date date, String nameEquipe1, String nameEquipe2) {
+	public Match(int numMatch, String date, String nameEquipe1, String nameEquipe2) {
 
 		this.numMatch = numMatch;
 		this.date = date;
@@ -40,20 +39,20 @@ public class Match {
 
 		butEquipe1 = 0;
 		butEquipe2 = 0;
-		listeButEquipe1 = new ArrayList<Date>();
-		listeButEquipe2 = new ArrayList<Date>();
+		listeButEquipe1 = new ArrayList<String>();
+		listeButEquipe2 = new ArrayList<String>();
 		penaltyEquipe1 = 0;
 		penaltyEquipe2 = 0;
 		statusMatch = "EN COURS";
 
 	}
 
-	public void butPourEquipe1(Date date) {
+	public void butPourEquipe1(String date) {
 		this.butEquipe1++;
 		this.listeButEquipe1.add(date);
 	}
 
-	public void butPourEquipe2(Date date) {
+	public void butPourEquipe2(String date) {
 		this.butEquipe2++;
 		this.listeButEquipe2.add(date);
 	}
@@ -81,11 +80,11 @@ public class Match {
 		this.numMatch = numMatch;
 	}
 
-	public Date getDate() {
+	public String getDate() {
 		return date;
 	}
 
-	public void setDate(Date date) {
+	public void setDate(String date) {
 		this.date = date;
 	}
 
@@ -129,19 +128,19 @@ public class Match {
 		this.butEquipe2 = butEquipe2;
 	}
 
-	public List<Date> getListeButEquipe1() {
+	public List<String> getListeButEquipe1() {
 		return listeButEquipe1;
 	}
 
-	public void setListeButEquipe1(List<Date> listeButEquipe1) {
+	public void setListeButEquipe1(List<String> listeButEquipe1) {
 		this.listeButEquipe1 = listeButEquipe1;
 	}
 
-	public List<Date> getListeButEquipe2() {
+	public List<String> getListeButEquipe2() {
 		return listeButEquipe2;
 	}
 
-	public void setListeButEquipe2(List<Date> listeButEquipe2) {
+	public void setListeButEquipe2(List<String> listeButEquipe2) {
 		this.listeButEquipe2 = listeButEquipe2;
 	}
 

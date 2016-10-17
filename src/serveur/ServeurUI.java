@@ -1,6 +1,7 @@
 package serveur;
 
 import java.awt.Dimension;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
@@ -19,14 +20,15 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
-import javax.swing.SwingConstants;
 
 import org.apache.log4j.Logger;
 
@@ -34,6 +36,7 @@ import objet.ListeDesMatchs;
 import objet.Match;
 import objet.Paris;
 import test.RejectedExecutionHandlerImpl;
+import tools.Tools;
 
 /***
  * Si probleme de port faire :
@@ -57,16 +60,27 @@ public class ServeurUI extends JFrame implements ActionListener {
 	JButton btClean = new JButton("Effacer");
 	JButton btLaunch = new JButton("Lancer Serveur");
 	JButton btSent = new JButton("Envoyer message aux clients");
-	JButton btDisconnectAllClients = new JButton("Déconnexion des clients");
+	JButton btDisconnectAllClients = new JButton("Deconnexion");
+
+	//Pour les Matchs
+	JButton btAjoutMatch = new JButton("Ajouter Match");
+	//--liste
+	DefaultListModel model = new DefaultListModel();
+	JList list = new JList(model);
+
+	//--Fin liste
+	JButton btBut1 = new JButton("But Equipe 1");
+	JButton btBut2 = new JButton("But Equipe 2");
+	JButton btPenalty1 = new JButton("Pénalty Equipe 1");
+	JButton btPenalty2 = new JButton("Pénalty Equipe 2");
 
 	// Pour modifier le textArea d'une autre classe (ServeurUI.appendToTextArea("texte");)
 	public static void appendToTextArea(String text) {
 		textArea1.append(text);
 	}
-	
+
 	//Objet
-	private Match match;
-	private ListeDesMatchs listeDesMatchs;
+	private static ListeDesMatchs listeDesMatchs;
 	private Paris paris;
 
 	// Liste des utilisateurs
@@ -81,40 +95,71 @@ public class ServeurUI extends JFrame implements ActionListener {
 
 		JFrame frame = new JFrame();
 		frame.setTitle("Serveur Hoc");
-		frame.setSize(600, 400);
+		frame.setSize(700, 400);
 		frame.setResizable(false);
 		JPanel pannel = new JPanel();
 
-		JTabbedPane onglets = new JTabbedPane(SwingConstants.TOP);
+		JTabbedPane onglets = new JTabbedPane();
 
 		// Premier Onglet
 		JPanel onglet1 = new JPanel();
-		JLabel titreOnglet1 = new JLabel("");
-		onglet1.add(titreOnglet1);
-		onglet1.setPreferredSize(new Dimension(600, 400));
+
+		//Panel pour les rangées ligne,colonne
+		JPanel pan1 = new JPanel();
+		pan1.setLayout(new GridLayout(1, 4));
+		JPanel pan2 = new JPanel();
+		pan2.setLayout(new GridLayout(1, 1));
+		JPanel pan3 = new JPanel();
+		pan3.setLayout(new GridLayout(3, 1));
+		JPanel panListeBt = new JPanel(); //liste des boutons
+		panListeBt.setLayout(new GridLayout(1, 4));
+
+		onglet1.setPreferredSize(new Dimension(700, 400));
 		onglets.addTab("Menu", onglet1);
 
 		// Déclaration texte
 		textArea1.setEditable(false); // disable editing
+		// Taille de la console
 		JScrollPane scrollPane = new JScrollPane(textArea1);
-		scrollPane.setPreferredSize(new Dimension(500, 150));
+		scrollPane.setPreferredSize(new Dimension(600, 120));
+		JScrollPane paneList = new JScrollPane(list);
+		paneList.setPreferredSize(new Dimension(50, 15));
 
 		// Déclartion bouton en public
 
 		// Ajout listener
+		// --- Lancement ---
 		btClean.addActionListener(this);
 		btSent.addActionListener(this);
 		btLaunch.addActionListener(this);
 		btDisconnectAllClients.addActionListener(this);
+		// --- Matchs   ---
+		btAjoutMatch.addActionListener(this);
+		btBut1.addActionListener(this);
+		btBut2.addActionListener(this);
+		btPenalty1.addActionListener(this);
+		btPenalty2.addActionListener(this);
 
-		// Ajout dans le JPanel
-		onglet1.add(btLaunch);
-		onglet1.add(btClean);
-		onglet1.add(btSent);
-		onglet1.add(btDisconnectAllClients);
-		onglet1.add(scrollPane);
-		frame.getContentPane().add(pannel);
-		frame.setVisible(true);
+		// Ajout dans le JPanel (Lancement)
+		pan1.add(btLaunch);
+		pan1.add(btClean);
+		pan1.add(btSent);
+		pan1.add(btDisconnectAllClients);
+		pan2.add(scrollPane);
+
+		//Ajout dans le gridlayout (Matchs)
+		panListeBt.add(btBut1);
+		panListeBt.add(btBut2);
+		panListeBt.add(btPenalty1);
+		panListeBt.add(btPenalty2);
+
+		pan3.add(btAjoutMatch);
+		pan3.add(paneList);
+		pan3.add(panListeBt); //gridlayout qui contient une liste de bouton
+
+		onglet1.add(pan1, "North"); //en haut
+		onglet1.add(pan2, "Center");//au milieu
+		onglet1.add(pan3, "South"); //en bas
 
 		// Deuxieme Onglet
 		JPanel onglet2 = new JPanel();
@@ -122,6 +167,7 @@ public class ServeurUI extends JFrame implements ActionListener {
 		onglet2.add(titreOnglet2);
 		onglets.addTab("A propos", onglet2);
 		onglets.setOpaque(true);
+
 		pannel.add(onglets);
 		frame.getContentPane().add(pannel);
 		frame.setVisible(true);
@@ -137,6 +183,9 @@ public class ServeurUI extends JFrame implements ActionListener {
 
 		// Lancement de l'interface
 		new ServeurUI();
+
+		//creation liste pour les matchs
+		listeDesMatchs = new ListeDesMatchs(1);
 	}
 
 	/**
@@ -160,6 +209,20 @@ public class ServeurUI extends JFrame implements ActionListener {
 		} else if (e.getSource() == btSent) {
 			textArea1.append("\nEnvoie manuel");
 			sendToEveryone("Serveur:Envoie manuel:Chat");
+		} else if (e.getSource() == btAjoutMatch) {
+			int numeroMatch = 1;
+			String equipe1 = "red";
+			String equipe2 = "blue";
+			String crDate = Tools.currentStrDate();
+			listeDesMatchs.ajouteMatch(new Match(numeroMatch, crDate, equipe1, equipe2));
+			model.addElement("n." + numeroMatch + " " + equipe1 + " vs " + equipe2);
+			textArea1.append("\nAjout d'un Match : " + "n." + numeroMatch + " " + equipe1 + " vs " + equipe2);
+		} else if (e.getSource() == btBut1) {
+			String crDate = Tools.currentStrDate();
+			textArea1.append("\n:" + crDate + " But equipe 1 du match n." + 1);
+		} else if (e.getSource() == btBut2) {
+			String crDate = Tools.currentStrDate();
+			textArea1.append("\n:" + crDate + " But equipe 2 du match n." + 1);
 		}
 
 	}
@@ -191,8 +254,8 @@ public class ServeurUI extends JFrame implements ActionListener {
 			String connect = "Connect";
 			String disconnect = "Disconnect";
 			String chat = "Chat";
-			String pari ="Pari";
-			String score ="Score";
+			String pari = "Pari";
+			String score = "Score";
 			String[] data;
 
 			try {
@@ -226,8 +289,8 @@ public class ServeurUI extends JFrame implements ActionListener {
 						sendToEveryone((data[0] + ": a parié " + data[1] + ":" + chat));
 					} else if (data[2].equals(score)) {
 						sendToEveryone((data[0] + ": Le score est de 3/3 :" + chat));
-					}else{
-						
+					} else {
+
 					}
 				}
 			} catch (Exception ex) {
@@ -267,8 +330,6 @@ public class ServeurUI extends JFrame implements ActionListener {
 			}
 		}
 	}
-
-
 
 	/**
 	 * Pour tester utilser la classe UDPClientConsole
@@ -313,7 +374,8 @@ public class ServeurUI extends JFrame implements ActionListener {
 					// METHODE UDP ( POOL DE THREAD) voir aussi ReponseClient.java
 					ThreadFactory threadFactory = Executors.defaultThreadFactory();
 					RejectedExecutionHandlerImpl rejectionHandler = new RejectedExecutionHandlerImpl(); //dans test
-			        ThreadPoolExecutor executorPool = new ThreadPoolExecutor(2, 4, 10, TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(2), threadFactory, rejectionHandler);
+					ThreadPoolExecutor executorPool = new ThreadPoolExecutor(2, 4, 10, TimeUnit.SECONDS,
+							new ArrayBlockingQueue<Runnable>(2), threadFactory, rejectionHandler);
 					executorPool.execute(new ReponseClient(serverSocket, requestPacket));
 					// FIN
 				}
