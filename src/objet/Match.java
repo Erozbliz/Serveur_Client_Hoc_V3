@@ -68,10 +68,9 @@ public class Match {
 	public void statusDuMatch(String status) {
 		this.statusMatch = status;
 	}
-	
-	
+
 	//---- GETTER ET SETTER ---
-	
+
 	public int getNumMatch() {
 		return numMatch;
 	}
@@ -116,7 +115,8 @@ public class Match {
 		return butEquipe1;
 	}
 
-	public void setButEquipe1(int butEquipe1) {
+	public void setButEquipe1() {
+		butEquipe1 = butEquipe1 + 1;
 		this.butEquipe1 = butEquipe1;
 	}
 
@@ -124,7 +124,8 @@ public class Match {
 		return butEquipe2;
 	}
 
-	public void setButEquipe2(int butEquipe2) {
+	public void setButEquipe2() {
+		butEquipe2 = butEquipe2 +1;
 		this.butEquipe2 = butEquipe2;
 	}
 
@@ -148,7 +149,8 @@ public class Match {
 		return penaltyEquipe1;
 	}
 
-	public void setPenaltyEquipe1(int penaltyEquipe1) {
+	public void setPenaltyEquipe1() {
+		penaltyEquipe1 = penaltyEquipe1 + 1;
 		this.penaltyEquipe1 = penaltyEquipe1;
 	}
 
@@ -156,11 +158,9 @@ public class Match {
 		return penaltyEquipe2;
 	}
 
-	public void setPenaltyEquipe2(int penaltyEquipe2) {
+	public void setPenaltyEquipe2() {
+		penaltyEquipe2 = penaltyEquipe2 + 1;
 		this.penaltyEquipe2 = penaltyEquipe2;
 	}
-
-	
-	
 
 }

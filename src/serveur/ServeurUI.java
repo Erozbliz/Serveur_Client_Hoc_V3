@@ -215,7 +215,6 @@ public class ServeurUI extends JFrame implements ActionListener {
 			String equipe1 = "red";
 			String equipe2 = "blue";
 			String crDate = Tools.currentStrDate();
-			//listeDesMatchs.ajouteMatch(new Match(numeroMatch, crDate, equipe1, equipe2));
 			listeDesMatch.add(new Match(numeroMatch, crDate, equipe1, equipe2));
 			//ajout dans la liste de selection
 			model.addElement("n." + numeroMatch + " " + equipe1 + " vs " + equipe2);
@@ -223,27 +222,73 @@ public class ServeurUI extends JFrame implements ActionListener {
 			textArea1.append("\nAjout d'un Match : " + "n." + numeroMatch + " " + equipe1 + " vs " + equipe2);
 		} else if (e.getSource() == btBut1) {
 			String crDate = Tools.currentStrDate();
-			textArea1.append("\n:" + crDate + " But equipe 1 du match n." + 1);
+			int select = list.getSelectedIndex();
+			if(select!=-1){
+				textArea1.append("\n" + crDate + " But equipe 1 du match n." + select);
+				listeDesMatch.get(select).butPourEquipe1(crDate); //ajoute un but + date
+			}else{
+				textArea1.append("\nSelectionner un match");
+			}
+			
 		} else if (e.getSource() == btBut2) {
 			String crDate = Tools.currentStrDate();
-			textArea1.append("\n:" + crDate + " But equipe 2 du match n." + 1);
+			int select = list.getSelectedIndex();
+			if(select!=-1){
+				textArea1.append("\n" + crDate + " But equipe 2 du match n." + select);
+				listeDesMatch.get(select).butPourEquipe2(crDate); //ajoute un but
+			}else{
+				textArea1.append("\nSelectionner un match");
+			}
 		} else if (e.getSource() == btPenalty1) {
 			String crDate = Tools.currentStrDate();
-			textArea1.append("\n:" + crDate + " Pénalty equipe 1 du match n." + 1);
+			int select = list.getSelectedIndex();
+			if(select!=-1){
+				textArea1.append("\n" + crDate + " Pénalty equipe 1 du match n." + select);
+				listeDesMatch.get(select).penaltyPourEquipe1(); //ajoute un but
+			}else{
+				textArea1.append("\nSelectionner un match");
+			}
 		} else if (e.getSource() == btPenalty2) {
 			String crDate = Tools.currentStrDate();
-			textArea1.append("\n:" + crDate + " Pénalty equipe 2 du match n." + 1);
+			int select = list.getSelectedIndex();
+			if(select!=-1){
+				textArea1.append("\n" + crDate + " Pénalty equipe 2 du match n." + select);
+				listeDesMatch.get(select).penaltyPourEquipe2(); //ajoute un but
+			}else{
+				textArea1.append("\nSelectionner un match");
+			}
 		}else if (e.getSource() == btAfficheInfo) {
 			String crDate = Tools.currentStrDate();
-			textArea1.append("\n:" + crDate + " Information sur le match n." + 1);
-			String strName = (String) list.getSelectedValue();
-			String strNameEquipe1 = listeDesMatch.get(0).getNameEquipe1();
-			String strNameEquipe2 = listeDesMatch.get(0).getNameEquipe2();
-			int strPenalty1 = listeDesMatch.get(0).getPenaltyEquipe1();
-			int strPenalty2 = listeDesMatch.get(0).getPenaltyEquipe2();
-			List<String> listeButEquipe1 = listeDesMatch.get(0).getListeButEquipe1();
-			List<String> listeButEquipe2 = listeDesMatch.get(0).getListeButEquipe2();
-			String strStatusMatch = listeDesMatch.get(0).getStatusMatch();
+			if(list.getSelectedIndex()!=-1){
+				//-1 si pas d'item sélectionné
+				String strName = (String) list.getSelectedValue();
+				int strIndex = list.getSelectedIndex();
+				textArea1.append("\n" + crDate + " Information sur le match n." + strIndex);
+				int strButEquipe1 = listeDesMatch.get(strIndex).getButEquipe1();
+				int strButEquipe2 = listeDesMatch.get(strIndex).getButEquipe2();
+				String strNameEquipe1 = listeDesMatch.get(strIndex).getNameEquipe1();
+				String strNameEquipe2 = listeDesMatch.get(strIndex).getNameEquipe2();
+				int strPenalty1 = listeDesMatch.get(strIndex).getPenaltyEquipe1();
+				int strPenalty2 = listeDesMatch.get(strIndex).getPenaltyEquipe2();
+				List<String> listeButEquipe1 = listeDesMatch.get(strIndex).getListeButEquipe1();
+				List<String> listeButEquipe2 = listeDesMatch.get(strIndex).getListeButEquipe2();
+				String strStatusMatch = listeDesMatch.get(strIndex).getStatusMatch();
+				textArea1.append("\n Information sur " + strName);
+				textArea1.append("\n Equipe "+strNameEquipe1+"/"+strNameEquipe2);
+				textArea1.append("\n Score  "+strButEquipe1+"/"+strButEquipe2);
+				textArea1.append("\n Pénaty "+strPenalty1+"/"+strPenalty2 +"\n"+strStatusMatch);
+				textArea1.append("\n Equipe 1 ");
+				for(int i = 0; i < listeButEquipe1.size(); i++) {
+		            textArea1.append("\nBut "+(i+1)+" le "+listeButEquipe1.get(i));
+		        }
+				textArea1.append("\n Equipe 2 ");
+				for(int i = 0; i < listeButEquipe2.size(); i++) {
+					textArea1.append("\nBut "+(i+1)+" le "+listeButEquipe2.get(i));
+		        }
+			}else{
+				textArea1.append("\nSelectionner un match");
+			}
+			
 			
 
 		}
