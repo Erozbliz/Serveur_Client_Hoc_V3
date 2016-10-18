@@ -43,6 +43,19 @@ public final class Tools {
 	}
 	
 	/**
+	 *  Génere un string aléatoire qui contient que des chiffre
+	 * @return 156
+	 */
+	public static String randString(){
+		String user = "1";
+		Random generator = new Random();
+		int i = generator.nextInt(999) + 1;
+		String is = String.valueOf(i);
+		user = user.concat(is);
+		return user;
+	}
+	
+	/**
 	 * 
 	 * @return la date actuelle au format string
 	 */

@@ -13,6 +13,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -32,9 +33,7 @@ import javax.swing.JTextArea;
 
 import org.apache.log4j.Logger;
 
-import objet.ListeDesMatchs;
 import objet.Match;
-import objet.Paris;
 import test.RejectedExecutionHandlerImpl;
 import tools.Tools;
 
@@ -55,6 +54,9 @@ public class ServeurUI extends JFrame implements ActionListener {
 	private ExecutorService poolThread; // pool de thread
 	private byte buffer[] = new byte[1024]; // buffer
 
+	// Pour la liste des matchs
+	ArrayList<Match> listeDesMatch = new ArrayList<Match>();
+
 	// Pour l'interface
 	static JTextArea textArea1 = new JTextArea("Serveur Console");
 	JButton btClean = new JButton("Effacer");
@@ -67,21 +69,18 @@ public class ServeurUI extends JFrame implements ActionListener {
 	//--liste
 	DefaultListModel model = new DefaultListModel();
 	JList list = new JList(model);
-
 	//--Fin liste
+
 	JButton btBut1 = new JButton("But Equipe 1");
 	JButton btBut2 = new JButton("But Equipe 2");
 	JButton btPenalty1 = new JButton("Pénalty Equipe 1");
 	JButton btPenalty2 = new JButton("Pénalty Equipe 2");
+	JButton btAfficheInfo = new JButton("Affiche les informations");
 
 	// Pour modifier le textArea d'une autre classe (ServeurUI.appendToTextArea("texte");)
 	public static void appendToTextArea(String text) {
 		textArea1.append(text);
 	}
-
-	//Objet
-	private static ListeDesMatchs listeDesMatchs;
-	private Paris paris;
 
 	// Liste des utilisateurs
 	ArrayList clientOutputStreams;
@@ -110,7 +109,7 @@ public class ServeurUI extends JFrame implements ActionListener {
 		JPanel pan2 = new JPanel();
 		pan2.setLayout(new GridLayout(1, 1));
 		JPanel pan3 = new JPanel();
-		pan3.setLayout(new GridLayout(3, 1));
+		pan3.setLayout(new GridLayout(4, 1));
 		JPanel panListeBt = new JPanel(); //liste des boutons
 		panListeBt.setLayout(new GridLayout(1, 4));
 
@@ -139,6 +138,7 @@ public class ServeurUI extends JFrame implements ActionListener {
 		btBut2.addActionListener(this);
 		btPenalty1.addActionListener(this);
 		btPenalty2.addActionListener(this);
+		btAfficheInfo.addActionListener(this);
 
 		// Ajout dans le JPanel (Lancement)
 		pan1.add(btLaunch);
@@ -156,6 +156,7 @@ public class ServeurUI extends JFrame implements ActionListener {
 		pan3.add(btAjoutMatch);
 		pan3.add(paneList);
 		pan3.add(panListeBt); //gridlayout qui contient une liste de bouton
+		pan3.add(btAfficheInfo);
 
 		onglet1.add(pan1, "North"); //en haut
 		onglet1.add(pan2, "Center");//au milieu
@@ -185,7 +186,7 @@ public class ServeurUI extends JFrame implements ActionListener {
 		new ServeurUI();
 
 		//creation liste pour les matchs
-		listeDesMatchs = new ListeDesMatchs(1);
+		//	listeDesMatch = new ArrayList<Match>();
 	}
 
 	/**
@@ -214,8 +215,11 @@ public class ServeurUI extends JFrame implements ActionListener {
 			String equipe1 = "red";
 			String equipe2 = "blue";
 			String crDate = Tools.currentStrDate();
-			listeDesMatchs.ajouteMatch(new Match(numeroMatch, crDate, equipe1, equipe2));
+			//listeDesMatchs.ajouteMatch(new Match(numeroMatch, crDate, equipe1, equipe2));
+			listeDesMatch.add(new Match(numeroMatch, crDate, equipe1, equipe2));
+			//ajout dans la liste de selection
 			model.addElement("n." + numeroMatch + " " + equipe1 + " vs " + equipe2);
+			//dans la console
 			textArea1.append("\nAjout d'un Match : " + "n." + numeroMatch + " " + equipe1 + " vs " + equipe2);
 		} else if (e.getSource() == btBut1) {
 			String crDate = Tools.currentStrDate();
@@ -223,7 +227,27 @@ public class ServeurUI extends JFrame implements ActionListener {
 		} else if (e.getSource() == btBut2) {
 			String crDate = Tools.currentStrDate();
 			textArea1.append("\n:" + crDate + " But equipe 2 du match n." + 1);
+		} else if (e.getSource() == btPenalty1) {
+			String crDate = Tools.currentStrDate();
+			textArea1.append("\n:" + crDate + " Pénalty equipe 1 du match n." + 1);
+		} else if (e.getSource() == btPenalty2) {
+			String crDate = Tools.currentStrDate();
+			textArea1.append("\n:" + crDate + " Pénalty equipe 2 du match n." + 1);
+		}else if (e.getSource() == btAfficheInfo) {
+			String crDate = Tools.currentStrDate();
+			textArea1.append("\n:" + crDate + " Information sur le match n." + 1);
+			String strName = (String) list.getSelectedValue();
+			String strNameEquipe1 = listeDesMatch.get(0).getNameEquipe1();
+			String strNameEquipe2 = listeDesMatch.get(0).getNameEquipe2();
+			int strPenalty1 = listeDesMatch.get(0).getPenaltyEquipe1();
+			int strPenalty2 = listeDesMatch.get(0).getPenaltyEquipe2();
+			List<String> listeButEquipe1 = listeDesMatch.get(0).getListeButEquipe1();
+			List<String> listeButEquipe2 = listeDesMatch.get(0).getListeButEquipe2();
+			String strStatusMatch = listeDesMatch.get(0).getStatusMatch();
+			
+
 		}
+		
 
 	}
 
