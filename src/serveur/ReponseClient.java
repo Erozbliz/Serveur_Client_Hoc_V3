@@ -5,6 +5,10 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 
+import tools.Serialisation;
+
+
+
 
 /**
  * Pour la pool de Thread
@@ -33,8 +37,15 @@ public class ReponseClient implements Runnable {
 		int port = requestPacket.getPort();
 		
 		if(sentence.equals("score")){
-			capitalizedSentence = "le résultat est 3/3";
-			sendData = capitalizedSentence.getBytes();
+			//capitalizedSentence = "le résultat est 3/3";
+			//sendData = capitalizedSentence.getBytes();
+            try {
+				sendData = Serialisation.serialisation(ServeurUI.listeDesMatch); //Sérialisation de la liste des matchs
+			} catch (IOException e) {
+				System.err.println("Error serialisation\n");
+				e.printStackTrace();
+			}
+
 		}else{
 			capitalizedSentence = sentence.toUpperCase();
 			sendData = capitalizedSentence.getBytes();

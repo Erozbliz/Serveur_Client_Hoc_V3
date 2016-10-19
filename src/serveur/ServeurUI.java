@@ -12,10 +12,10 @@ import java.net.DatagramSocket;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -51,11 +51,13 @@ public class ServeurUI extends JFrame implements ActionListener {
 
 	// Pour Serveur UDP
 	private DatagramSocket serverSocket; // datagramme
-	private ExecutorService poolThread; // pool de thread
+	//private ExecutorService poolThread; // pool de thread
 	private byte buffer[] = new byte[1024]; // buffer
 
 	// Pour la liste des matchs
-	ArrayList<Match> listeDesMatch = new ArrayList<Match>();
+	static ArrayList<Match> listeDesMatch = new ArrayList<Match>();
+	// Pour la liste des paris
+	HashMap hmParis = new HashMap();
 
 	// Pour l'interface
 	static JTextArea textArea1 = new JTextArea("Serveur Console");
@@ -80,6 +82,10 @@ public class ServeurUI extends JFrame implements ActionListener {
 	// Pour modifier le textArea d'une autre classe (ServeurUI.appendToTextArea("texte");)
 	public static void appendToTextArea(String text) {
 		textArea1.append(text);
+	}
+	
+	public static int getSizeListeMatch() {
+		return listeDesMatch.size();
 	}
 
 	// Liste des utilisateurs

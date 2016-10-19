@@ -12,6 +12,7 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.util.ArrayList;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -25,7 +26,9 @@ import javax.swing.SwingConstants;
 
 import org.apache.log4j.Logger;
 
+import objet.Match;
 import serveur.ServeurUI;
+import tools.Serialisation;
 import tools.Tools;
 
 public class ClientUI extends JFrame implements ActionListener {
@@ -301,16 +304,21 @@ public class ClientUI extends JFrame implements ActionListener {
 		sendData = sentence.getBytes();
 		DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, IPAddress, portUDP);
 		clientSocket.send(sendPacket);
-		DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
-		clientSocket.receive(receivePacket);
+		
 		// String modifiedSentence = new String(receivePacket.getData());
 		// On récupere que le contenu
 		/*String modifiedSentence = new String(sendPacket.getData(), 0, sendPacket.getLength());
 		textArea1.append(modifiedSentence+"\n");
 		System.out.println("DU SERVEUR:" + modifiedSentence);*/
+		DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
+		clientSocket.receive(receivePacket);
+		ArrayList<Match> listeDesMatch = (ArrayList<Match>) Serialisation.deserialisation(receivePacket.getData());
+
+
 		
 		String modifiedSentence = new String(receivePacket.getData(), 0, receivePacket.getLength());
-		textArea1.append(modifiedSentence+"\n");
+		
+		textArea1.append(modifiedSentence+"\n "+listeDesMatch.get(0).getNameEquipe1());
 		System.out.println("DU SERVEUR:" + modifiedSentence);
 		
 		
