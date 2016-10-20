@@ -31,7 +31,7 @@ public class ReponseClient implements Runnable {
 		String sentence = new String(requestPacket.getData(), 0, requestPacket.getLength());
 		String capitalizedSentence = "";
 		
-		ServeurUI.appendToTextArea("UDP msg : "+sentence+"\n");
+		ServeurUI.appendToTextArea("\nUDP msg : "+sentence+"\n");
 		System.out.println("RECEIVED: " + sentence);
 		InetAddress IPAddress = requestPacket.getAddress();
 		int port = requestPacket.getPort();
@@ -39,8 +39,11 @@ public class ReponseClient implements Runnable {
 		if(sentence.equals("score")){
 			//capitalizedSentence = "le résultat est 3/3";
 			//sendData = capitalizedSentence.getBytes();
+			ServeurUI.appendToTextArea("Envoie de la liste des Matchs\n");
             try {
-				sendData = Serialisation.serialisation(ServeurUI.listeDesMatch); //Sérialisation de la liste des matchs
+				//sendData = Serialisation.serialisation(ServeurUI.listeDesMatch); //Sérialisation de la liste des matchs
+            	sendData = Serialisation.serialize2(ServeurUI.getListeMatch()); //Sérialisation de la liste des matchs
+    
 			} catch (IOException e) {
 				System.err.println("Error serialisation\n");
 				e.printStackTrace();

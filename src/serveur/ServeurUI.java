@@ -56,6 +56,7 @@ public class ServeurUI extends JFrame implements ActionListener {
 
 	// Pour la liste des matchs
 	static ArrayList<Match> listeDesMatch = new ArrayList<Match>();
+	int numeroMatch = 1;
 	// Pour la liste des paris
 	HashMap hmParis = new HashMap();
 
@@ -86,6 +87,10 @@ public class ServeurUI extends JFrame implements ActionListener {
 	
 	public static int getSizeListeMatch() {
 		return listeDesMatch.size();
+	}
+	
+	public static ArrayList<Match> getListeMatch() {
+		return listeDesMatch;
 	}
 
 	// Liste des utilisateurs
@@ -217,15 +222,15 @@ public class ServeurUI extends JFrame implements ActionListener {
 			textArea1.append("\nEnvoie manuel");
 			sendToEveryone("Serveur:Envoie manuel:Chat");
 		} else if (e.getSource() == btAjoutMatch) {
-			int numeroMatch = 1;
-			String equipe1 = "red";
-			String equipe2 = "blue";
+			String equipe1 = "red"+numeroMatch;
+			String equipe2 = "blue"+numeroMatch;
 			String crDate = Tools.currentStrDate();
 			listeDesMatch.add(new Match(numeroMatch, crDate, equipe1, equipe2));
 			//ajout dans la liste de selection
 			model.addElement("n." + numeroMatch + " " + equipe1 + " vs " + equipe2);
 			//dans la console
 			textArea1.append("\nAjout d'un Match : " + "n." + numeroMatch + " " + equipe1 + " vs " + equipe2);
+			numeroMatch++;
 		} else if (e.getSource() == btBut1) {
 			String crDate = Tools.currentStrDate();
 			int select = list.getSelectedIndex();

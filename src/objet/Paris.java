@@ -1,10 +1,12 @@
 package objet;
 
+import java.io.Serializable;
+
 /**
  * S’occupe d'enregistrer les paris sur les matchs.
  *
  */
-public class Paris {
+public class Paris implements Serializable{
 
 	private Match match;
 	private int somme;

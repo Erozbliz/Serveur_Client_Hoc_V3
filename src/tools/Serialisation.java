@@ -41,4 +41,23 @@ public final class Serialisation {
 		arrayByte = outputStream.toByteArray();
 		return arrayByte;
 	}
+	
+	
+	  public static Object deserialize2(byte[] bytes) throws IOException, ClassNotFoundException {
+	        try(ByteArrayInputStream b = new ByteArrayInputStream(bytes)){
+	            try(ObjectInputStream o = new ObjectInputStream(b)){
+	                return o.readObject();
+	            }
+	        }
+	  }
+	    
+
+	   public static byte[] serialize2(Object obj) throws IOException {
+	        try(ByteArrayOutputStream b = new ByteArrayOutputStream()){
+	            try(ObjectOutputStream o = new ObjectOutputStream(b)){
+	                o.writeObject(obj);
+	            }
+	            return b.toByteArray();
+	        }
+	    }
 }

@@ -1,5 +1,6 @@
 package objet;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,7 +10,7 @@ import java.util.List;
  * temps au chronomètre, buts et pénalités
  *
  */
-public class Match {
+public class Match implements Serializable{
 
 	private int numMatch;
 	private String date;

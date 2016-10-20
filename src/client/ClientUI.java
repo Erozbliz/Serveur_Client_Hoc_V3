@@ -44,6 +44,9 @@ public class ClientUI extends JFrame implements ActionListener {
 	Socket sock;
 	BufferedReader reader;
 	PrintWriter writer;
+	
+	//Contient la liste des matchs recu par le serveur
+	ArrayList<Match> listeDesMatch;
 
 
 	// Pour l'interface
@@ -305,24 +308,20 @@ public class ClientUI extends JFrame implements ActionListener {
 		DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, IPAddress, portUDP);
 		clientSocket.send(sendPacket);
 		
-		// String modifiedSentence = new String(receivePacket.getData());
-		// On récupere que le contenu
-		/*String modifiedSentence = new String(sendPacket.getData(), 0, sendPacket.getLength());
-		textArea1.append(modifiedSentence+"\n");
-		System.out.println("DU SERVEUR:" + modifiedSentence);*/
+
+		// Datagram reçu par le serveur
 		DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
 		clientSocket.receive(receivePacket);
-		ArrayList<Match> listeDesMatch = (ArrayList<Match>) Serialisation.deserialisation(receivePacket.getData());
 
+		//on récupere la liste des matchs dans la réponse du serveur
+		 listeDesMatch = (ArrayList<Match>) Serialisation.deserialize2(receivePacket.getData());
 
+		 //a garder
+		 //String modifiedSentence = new String(receivePacket.getData(), 0, receivePacket.getLength());
 		
-		String modifiedSentence = new String(receivePacket.getData(), 0, receivePacket.getLength());
+		textArea1.append("\n Il y a "+listeDesMatch.size()+" matchs");
 		
-		textArea1.append(modifiedSentence+"\n "+listeDesMatch.get(0).getNameEquipe1());
-		System.out.println("DU SERVEUR:" + modifiedSentence);
-		
-		
-		
+
 		clientSocket.close(); // On ferme la socket
 		System.out.println("Socket Client close");
 	}
