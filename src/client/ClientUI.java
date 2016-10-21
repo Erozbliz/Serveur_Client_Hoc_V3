@@ -14,9 +14,11 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.util.ArrayList;
 
+import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
@@ -54,11 +56,28 @@ public class ClientUI extends JFrame implements ActionListener {
 	JButton btClean = new JButton("Effacer");
 	JButton btConnectTCP = new JButton("Connexion TCP");
 	JButton btSentMsgUDPdefault = new JButton("Message UDP");
-	JButton btScore = new JButton("Afficher le score");
+	JButton btScore = new JButton("Actualiser");
 	JLabel jUser = new JLabel(username);
 	JTextField tfPari = new JTextField();
 	JButton btPari = new JButton("Parier");
 	JButton btAfficherPari = new JButton("Afficher Somme");
+	// Liste des matchs
+	DefaultListModel model = new DefaultListModel();
+	JList list = new JList(model);
+	//fin listes
+	JButton btInfoTargetList = new JButton("Information sur le match sélectionné");
+	JLabel jEquipe = new JLabel("Equipe 1 / Equipe 2");
+	JLabel jBut = new JLabel("But 	  : 0 / 0");
+	JLabel jPenalty = new JLabel("Pénalty : 0 / 0");
+	JLabel jStatus = new JLabel("EN COURS");
+	JLabel jChrono = new JLabel("0000");
+	JLabel jListeDesBut = new JLabel("Liste des buts");
+	// Liste
+	DefaultListModel modelBut1 = new DefaultListModel();
+	JList listBut1 = new JList(modelBut1);
+	DefaultListModel modelBut2 = new DefaultListModel();
+	JList listBut2 = new JList(modelBut2);
+	//fin listes
 
 	// Pour modifier le textArea d'une autre classe (ServeurUI.appendToTextArea("texte");)
 	public static void appendToTextArea(String text) {
@@ -90,7 +109,15 @@ public class ClientUI extends JFrame implements ActionListener {
 		JPanel pan2 = new JPanel();
 		pan2.setLayout(new GridLayout(1, 1));
 		JPanel pan3 = new JPanel();
-		pan3.setLayout(new GridLayout(1, 2));
+		pan3.setLayout(new GridLayout(6, 1));
+		JPanel panListeBtParis = new JPanel(); //liste des boutons pari
+		panListeBtParis.setLayout(new GridLayout(1, 4));
+		JPanel panListeJLabel1 = new JPanel(); //liste des labels
+		panListeJLabel1.setLayout(new GridLayout(1, 4));
+		JPanel panListeJLabel2 = new JPanel(); //liste des labels
+		panListeJLabel2.setLayout(new GridLayout(1, 4));
+		JPanel panListeList3 = new JPanel(); //liste des liste des buts
+		panListeList3.setLayout(new GridLayout(1, 2));
 
 		JLabel titreOnglet1 = new JLabel("");
 		onglet1.add(titreOnglet1);
@@ -101,7 +128,13 @@ public class ClientUI extends JFrame implements ActionListener {
 		textArea1.setEditable(false); // disable editing
 		// Taille de la console
 		JScrollPane scrollPane = new JScrollPane(textArea1);
-		scrollPane.setPreferredSize(new Dimension(500, 150));
+		scrollPane.setPreferredSize(new Dimension(500, 100));
+		JScrollPane paneList = new JScrollPane(list);
+		paneList.setPreferredSize(new Dimension(50, 12));
+		JScrollPane paneBut1 = new JScrollPane(listBut1);
+		paneBut1.setPreferredSize(new Dimension(50, 12));
+		JScrollPane paneBut2 = new JScrollPane(listBut2);
+		paneBut2.setPreferredSize(new Dimension(50, 12));
 
 		// Déclartion bouton en public
 
@@ -114,6 +147,7 @@ public class ClientUI extends JFrame implements ActionListener {
 		btPari.setEnabled(false); // il faut que l'utilisateur se connecte d'abord
 		btAfficherPari.addActionListener(this);
 		btAfficherPari.setEnabled(false);
+		btInfoTargetList.addActionListener(this);
 
 		// Ajout dans le JPanel
 		pan1.add(btClean);
@@ -121,10 +155,39 @@ public class ClientUI extends JFrame implements ActionListener {
 		pan1.add(btSentMsgUDPdefault);
 		pan1.add(btScore);
 		pan2.add(scrollPane);
-		pan3.add(jUser);
-		pan3.add(tfPari);
-		pan3.add(btPari);
-		pan3.add(btAfficherPari);
+		
+		// prend 1 colonne et 1 ligne pour panListeBtParis
+		panListeBtParis.add(jUser);
+		panListeBtParis.add(tfPari);
+		panListeBtParis.add(btPari);
+		panListeBtParis.add(btAfficherPari);
+		
+		// prend 1 colonne et 1 ligne pour panListeBtParis
+		panListeJLabel1.add(jEquipe);
+		panListeJLabel1.add(jBut);
+		panListeJLabel1.add(jPenalty);
+		panListeJLabel1.add(jStatus);
+		
+		// prend 1 colonne et 1 ligne pour panListeBtParis
+		panListeList3.add(paneBut1);
+		panListeList3.add(paneBut2);
+		
+		pan3.add(paneList); //liste de selection du match
+		pan3.add(btInfoTargetList); //bouton de selection du match
+		pan3.add(panListeJLabel1); //Affichage des information sur un match
+		pan3.add(jListeDesBut); //Affiche "Liste des buts"
+		pan3.add(panListeList3);
+		pan3.add(panListeBtParis); //Groupement de bouton paris
+		
+		/*model.addElement("n.");
+		modelBut1.addElement("111111111");
+		modelBut1.addElement("111111111");
+		modelBut1.addElement("111111111");
+		modelBut2.addElement("2222");*/
+
+
+		
+	
 
 		onglet1.add(pan1, "North"); //en haut
 		onglet1.add(pan2, "Center");//au milieu
@@ -203,8 +266,9 @@ public class ClientUI extends JFrame implements ActionListener {
 				e1.printStackTrace();
 			}
 		} else if (e.getSource() == btScore) {
-			//Bouton Afficher le score
+			//Bouton Afficher la liste des matchs
 			try {
+				model.removeAllElements(); //ne pas oublier
 				messageUDP("score");
 			} catch (Exception e1) {
 				e1.printStackTrace();
@@ -212,6 +276,16 @@ public class ClientUI extends JFrame implements ActionListener {
 		} else if (e.getSource() == btPari) {
 			//Bouton faire un pari
 			sendToServer("pari", "pari");
+		}
+		else if (e.getSource() == btInfoTargetList) {
+			//Bouton Information sur le match sélectionné
+			if(list.getSelectedIndex()!=-1){
+				//-1 si pas d'item sélectionné
+				int index = list.getSelectedIndex();
+				printInfoSelectMatch(index);
+			}else{
+				textArea1.append("\nSelectionner un match");
+			}
 		}
 	}
 
@@ -321,9 +395,38 @@ public class ClientUI extends JFrame implements ActionListener {
 		
 		textArea1.append("\n Il y a "+listeDesMatch.size()+" matchs");
 		
+		//int i=0;
+		for(int i=0;i< listeDesMatch.size(); i++){
+			model.addElement("Match n."+(i+1)+ " " + listeDesMatch.get(i).getNameEquipe1()+" vs " +  listeDesMatch.get(i).getNameEquipe2()+ " le " +listeDesMatch.get(i).getDate());
+		}
+		//On affiche les info pour le 1er match
+		printInfoSelectMatch(0);
+	
 
 		clientSocket.close(); // On ferme la socket
 		System.out.println("Socket Client close");
+	}
+	
+	/**
+	 * Affiche les informations d'un match sélectionné
+	 * @param numMatch = numéro du match dans la liste (attention pour match 1 mettre 0)
+	 */
+	public void printInfoSelectMatch(int numMatch){
+		if(listeDesMatch.size()>=1){
+			textArea1.append("\n Affichage des données pour le match "+(numMatch+1));
+			jEquipe.setText("Equipe : " + listeDesMatch.get(numMatch).getNameEquipe1() +" / " +listeDesMatch.get(numMatch).getNameEquipe2());
+			jBut.setText("But : " + listeDesMatch.get(numMatch).getButEquipe1() +" / " +listeDesMatch.get(numMatch).getButEquipe2());
+			jPenalty.setText("Pénalty : " + listeDesMatch.get(numMatch).getPenaltyEquipe1() +" / " +listeDesMatch.get(numMatch).getPenaltyEquipe2());
+			jStatus.setText("Status : " + listeDesMatch.get(numMatch).getStatusMatch());
+			modelBut1.removeAllElements();
+			modelBut2.removeAllElements();
+			for(int i = 0; i < listeDesMatch.get(numMatch).getListeButEquipe1().size(); i++) {
+				modelBut1.addElement("\nBut "+(i+1)+" le "+listeDesMatch.get(numMatch).getListeButEquipe1().get(i));
+	        }
+			for(int i = 0; i < listeDesMatch.get(numMatch).getListeButEquipe2().size(); i++) {
+				modelBut2.addElement("\nBut "+(i+1)+" le "+listeDesMatch.get(numMatch).getListeButEquipe2().get(i));
+	        }
+		}
 	}
 
 }
