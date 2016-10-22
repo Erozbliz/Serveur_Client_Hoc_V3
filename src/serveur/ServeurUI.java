@@ -218,6 +218,7 @@ public class ServeurUI extends JFrame implements ActionListener {
 			textArea1.append("\nDéconnexion des clients\n");
 		} else if (e.getSource() == btLaunch) {
 			textArea1.append("\nLancement du serveur TCP sur port : " + portTCP);
+			btLaunch.setEnabled(false);
 			// Serveur TCP
 			Thread starter = new Thread(new ServerStartTCP());
 			starter.start();
@@ -236,45 +237,20 @@ public class ServeurUI extends JFrame implements ActionListener {
 			listeDesMatch.add(new Match(numeroMatch, crDate, equipe1, equipe2));//ajout match
 			
 			HashMap<String, Paris> valParis = new HashMap<String, Paris>();//ajout d'une liste de paris
-			//valParis.put("user1", nouveauParis); //ajoute un paris
 			String stringToInt = Integer.toString(numeroMatch);
-			listeDesParis.put(stringToInt, valParis);
+			listeDesParis.put(stringToInt, valParis);//ajout d'une liste de paris
 			
-			valParis.put("user1", new Paris(1,"red1",300,"user1"));
-			valParis.put("user2", new Paris(2,"blue2",400,"user2"));
+			//valParis.put("user1", new Paris(1,"red1",300,"user1"));
+			//valParis.put("user2", new Paris(2,"blue2",400,"user2"));
 			
 			//int somme = listeDesParis.get("1").get("user1").getSomme();
 			//textArea1.append("\nsomme: "+somme);
 			
-			// Get keys
-			Set<String> keysListe = listeDesParis.keySet();
-			int sommeEquipe1 = 0;
-			int sommeEquipe2 = 0;
-			// affiche tout les utilisateur dans la liste 1
-			for (String key : keysListe) {
-			    System.out.println("Paris pour match : "+key);
-			    Set<String> keys1 = listeDesParis.get(key).keySet();
-			    for (String keyUser : keys1) {
-				    System.out.println("Dans match "+key +" "+keyUser+" a parié "+listeDesParis.get(key).get(keyUser).getSomme()+"$ pour l'équipe "+listeDesParis.get(key).get(keyUser).getNameEquipe());
-				    if(listeDesParis.get(key).get(keyUser).getNumEquipe()==1){
-				    	sommeEquipe1 = sommeEquipe1 + listeDesParis.get(key).get(keyUser).getSomme();
-				    }else{
-				    	sommeEquipe2 = sommeEquipe1 + listeDesParis.get(key).get(keyUser).getSomme();
-				    }
-			    }
-			    System.out.println("Paris pour equipe 1 : "+sommeEquipe1);
-			    System.out.println("Paris pour equipe 2 : "+sommeEquipe2);
-			    sommeEquipe1=0;
-			    sommeEquipe2=0;
-			}
+		
+			//affiche des informations sur les paris
+			printAllInfoParis();
 
 
-
-
-			
-			
-			
-			
 			/*HashMap<String,Paris> acctyp = new HashMap<String,Paris>();
 			HashMap<String, HashMap<String,Paris>> gens = new HashMap<String,HashMap<String,Paris>>();
 			acctyp.put("user1", nouveauParis);
@@ -389,12 +365,13 @@ public class ServeurUI extends JFrame implements ActionListener {
 			String disconnect = "Disconnect";
 			String chat = "Chat";
 			String pari = "Pari";
+			String pariInfo = "PariInfo";
 			String score = "Score";
 			String[] data;
 
 			try {
-				// message = user558:has connected.:Connect
-				// Structure name:message:Chat/Connect/Disconnect/Pari
+				// message = user558:has connected.:msg2:Connect
+				// Structure name:message1:message2:Chat/Connect/Disconnect/Pari
 				while ((message = reader.readLine()) != null) {
 
 					// textArea1.append("Received: " + message + "\n");
@@ -404,12 +381,13 @@ public class ServeurUI extends JFrame implements ActionListener {
 
 					//for (String token : data) { textArea1.append(token +"\n"); }
 
-					textArea1.append(data[0] + " : " + data[1] + "\n");
+					
 
 					// shutDownWithKeyword(data[1]);
 
 					if (data[2].equals(connect)) {
 						// si name:message/Connect
+						textArea1.append(data[0] + " : " + data[1]+"\n");
 						sendToEveryone((data[0] + ":" + data[1] + ":" + chat));
 					} else if (data[2].equals(disconnect)) {
 						// sinon si name:message/Disconnect
@@ -418,11 +396,14 @@ public class ServeurUI extends JFrame implements ActionListener {
 					} else if (data[2].equals(chat)) {
 						// sinon si name:message/Chat
 						sendToEveryone(message);
-					} else if (data[2].equals(pari)) {
+					} else if (data[3].equals("Pari")) {
 						// sinon si name:message/Pari
-						sendToEveryone((data[0] + ": a parié " + data[1] + ":" + chat));
-					} else if (data[2].equals(score)) {
-						sendToEveryone((data[0] + ": Le score est de 3/3 :" + chat));
+						textArea1.append(data[0] + " : a parié " + data[1] + "$ pour l'équipe"+data[2]+"\n");
+						sendToEveryone((data[0] + ": a parié " + data[1] + "$ pour l'équipe"+data[2]+":" + pari));
+					} else if (data[3].equals("PariInfo")) {
+						textArea1.append(data[0] + " : a demandé des information sur le pari ");
+						sendToEveryone((data[0] + ": La somme du pari est de 100$:" + pari));
+						sendToOne("sombra",data[0]);
 					} else {
 
 					}
@@ -457,7 +438,7 @@ public class ServeurUI extends JFrame implements ActionListener {
 
 					Thread listener = new Thread(new ClientHandler(clientSock, writer));
 					listener.start();
-					textArea1.append("\n Une connexion à été établie \n");
+					textArea1.append("\n Une connexion à été établie pour les paris \n");
 				}
 			} catch (Exception ex) {
 				textArea1.append("Erreur de connexion (port déjà utilisé) \n");
@@ -532,6 +513,7 @@ public class ServeurUI extends JFrame implements ActionListener {
 	public void sendToEveryone(String message) {
 		Iterator it = clientOutputStreams.iterator();
 		while (it.hasNext()) {
+		//	textArea1.append("-----------"+clientOutputStreams.size()+ ""+ it.next());
 			try {
 				PrintWriter writer = (PrintWriter) it.next(); //envoie le message
 				writer.println(message); //ecrit dans la console
@@ -540,6 +522,50 @@ public class ServeurUI extends JFrame implements ActionListener {
 			} catch (Exception ex) {
 				textArea1.append("Erreur envoie aux clients \n");
 			}
+		}
+	}
+	
+	/**
+	 *  A CORRIGER
+	 * @param message
+	 */
+	public void sendToOne(String message, String user) {
+		ArrayList aaaaaa = new ArrayList();
+		aaaaaa.add(user);
+		Iterator it = aaaaaa.iterator();
+		while (it.hasNext()) {
+			try {
+				PrintWriter writer = (PrintWriter) it.next(); //envoie le message
+				writer.println(message); //ecrit dans la console
+				writer.flush();
+				//textArea1.setCaretPosition(textArea1.getDocument().getLength());
+			} catch (Exception ex) {
+				textArea1.append("Erreur envoie au client sendToOne\n");
+			}
+		}
+	}
+	
+	public void printAllInfoParis(){
+		// keys
+		Set<String> keysListe = listeDesParis.keySet();
+		int sommeEquipe1 = 0;
+		int sommeEquipe2 = 0;
+		// affiche tout les utilisateur dans la liste 1
+		for (String key : keysListe) {
+		    System.out.println("Paris pour match : "+key);
+		    Set<String> keys1 = listeDesParis.get(key).keySet();
+		    for (String keyUser : keys1) {
+			    System.out.println("Dans match "+key +" "+keyUser+" a parié "+listeDesParis.get(key).get(keyUser).getSomme()+"$ pour l'équipe "+listeDesParis.get(key).get(keyUser).getNameEquipe());
+			    if(listeDesParis.get(key).get(keyUser).getNumEquipe()==1){
+			    	sommeEquipe1 = sommeEquipe1 + listeDesParis.get(key).get(keyUser).getSomme();
+			    }else{
+			    	sommeEquipe2 = sommeEquipe1 + listeDesParis.get(key).get(keyUser).getSomme();
+			    }
+		    }
+		    System.out.println("Paris pour equipe 1 : "+sommeEquipe1);
+		    System.out.println("Paris pour equipe 2 : "+sommeEquipe2);
+		    sommeEquipe1=0;
+		    sommeEquipe2=0;
 		}
 	}
 

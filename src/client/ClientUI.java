@@ -59,6 +59,10 @@ public class ClientUI extends JFrame implements ActionListener {
 	JButton btScore = new JButton("Actualiser");
 	JLabel jUser = new JLabel(username);
 	JTextField tfPari = new JTextField();
+	JLabel jSeparateur = new JLabel("--------------- PARIER ICI ---------------");
+	JLabel jSeparateur2 = new JLabel("--------------- PARIER ICI ---------------");
+
+
 	JButton btPari = new JButton("Parier");
 	JButton btAfficherPari = new JButton("Afficher Somme");
 	// Liste des matchs
@@ -66,11 +70,11 @@ public class ClientUI extends JFrame implements ActionListener {
 	JList list = new JList(model);
 	//fin listes
 	JButton btInfoTargetList = new JButton("Information sur le match sélectionné");
-	JLabel jEquipe = new JLabel("Equipe 1 / Equipe 2");
-	JLabel jBut = new JLabel("But 	  : 0 / 0");
-	JLabel jPenalty = new JLabel("Pénalty : 0 / 0");
-	JLabel jStatus = new JLabel("EN COURS");
-	JLabel jChrono = new JLabel("0000");
+	JLabel jEquipe = new JLabel("");
+	JLabel jBut = new JLabel("");
+	JLabel jPenalty = new JLabel("");
+	JLabel jStatus = new JLabel("");
+	JLabel jChrono = new JLabel("");
 	JLabel jListeDesBut = new JLabel("Liste des buts");
 	// Liste
 	DefaultListModel modelBut1 = new DefaultListModel();
@@ -94,7 +98,7 @@ public class ClientUI extends JFrame implements ActionListener {
 
 		JFrame frame = new JFrame();
 		frame.setTitle("Client Hoc");
-		frame.setSize(600, 400);
+		frame.setSize(600, 500);
 		frame.setResizable(false);
 		JPanel pannel = new JPanel();
 
@@ -102,6 +106,7 @@ public class ClientUI extends JFrame implements ActionListener {
 
 		// Premier Onglet
 		JPanel onglet1 = new JPanel();
+		
 
 		//Panel pour les rangées ligne,colonne
 		JPanel pan1 = new JPanel();
@@ -109,9 +114,9 @@ public class ClientUI extends JFrame implements ActionListener {
 		JPanel pan2 = new JPanel();
 		pan2.setLayout(new GridLayout(1, 1));
 		JPanel pan3 = new JPanel();
-		pan3.setLayout(new GridLayout(6, 1));
+		pan3.setLayout(new GridLayout(9, 1));
 		JPanel panListeBtParis = new JPanel(); //liste des boutons pari
-		panListeBtParis.setLayout(new GridLayout(1, 4));
+		panListeBtParis.setLayout(new GridLayout(1, 2));
 		JPanel panListeJLabel1 = new JPanel(); //liste des labels
 		panListeJLabel1.setLayout(new GridLayout(1, 4));
 		JPanel panListeJLabel2 = new JPanel(); //liste des labels
@@ -121,7 +126,7 @@ public class ClientUI extends JFrame implements ActionListener {
 
 		JLabel titreOnglet1 = new JLabel("");
 		onglet1.add(titreOnglet1);
-		onglet1.setPreferredSize(new Dimension(600, 400));
+		onglet1.setPreferredSize(new Dimension(600, 500));
 		onglets.addTab("Menu", onglet1);
 
 		// Déclaration texte
@@ -130,7 +135,7 @@ public class ClientUI extends JFrame implements ActionListener {
 		JScrollPane scrollPane = new JScrollPane(textArea1);
 		scrollPane.setPreferredSize(new Dimension(500, 100));
 		JScrollPane paneList = new JScrollPane(list);
-		paneList.setPreferredSize(new Dimension(50, 12));
+		paneList.setPreferredSize(new Dimension(500, 12));
 		JScrollPane paneBut1 = new JScrollPane(listBut1);
 		paneBut1.setPreferredSize(new Dimension(50, 12));
 		JScrollPane paneBut2 = new JScrollPane(listBut2);
@@ -157,10 +162,10 @@ public class ClientUI extends JFrame implements ActionListener {
 		pan2.add(scrollPane);
 		
 		// prend 1 colonne et 1 ligne pour panListeBtParis
-		panListeBtParis.add(jUser);
+		//panListeBtParis.add(jUser);
 		panListeBtParis.add(tfPari);
 		panListeBtParis.add(btPari);
-		panListeBtParis.add(btAfficherPari);
+		//panListeBtParis.add(btAfficherPari);
 		
 		// prend 1 colonne et 1 ligne pour panListeBtParis
 		panListeJLabel1.add(jEquipe);
@@ -177,7 +182,12 @@ public class ClientUI extends JFrame implements ActionListener {
 		pan3.add(panListeJLabel1); //Affichage des information sur un match
 		pan3.add(jListeDesBut); //Affiche "Liste des buts"
 		pan3.add(panListeList3);
+		jSeparateur.setHorizontalAlignment(JLabel.CENTER);
+		jSeparateur.setVerticalAlignment(JLabel.CENTER);
+		pan3.add(jSeparateur);
+		pan3.add(jUser);
 		pan3.add(panListeBtParis); //Groupement de bouton paris
+		pan3.add(btAfficherPari);
 		
 		/*model.addElement("n.");
 		modelBut1.addElement("111111111");
@@ -245,6 +255,7 @@ public class ClientUI extends JFrame implements ActionListener {
 					writer.println(user + ": est connecté pour le pari:Connect");
 					writer.flush();
 					isConnected = true;
+					btConnectTCP.setEnabled(false);
 					btPari.setEnabled(true); //maintenant l'utilisateur peut parier
 					btAfficherPari.setEnabled(true);//maintenant l'utilisateur peut afficher les scores
 				} catch (Exception ex) {
@@ -274,8 +285,8 @@ public class ClientUI extends JFrame implements ActionListener {
 				e1.printStackTrace();
 			}
 		} else if (e.getSource() == btPari) {
-			//Bouton faire un pari
-			sendToServer("pari", "pari");
+			//Bouton faire un pari : somme,numero equipe,code
+			sendToServer2(tfPari.getText(),"1", "Pari");
 		}
 		else if (e.getSource() == btInfoTargetList) {
 			//Bouton Information sur le match sélectionné
@@ -286,6 +297,9 @@ public class ClientUI extends JFrame implements ActionListener {
 			}else{
 				textArea1.append("\nSelectionner un match");
 			}
+		} else if (e.getSource() == btAfficherPari) {
+			//Bouton afficher somme pari
+			sendToServer2("0", "PariInfo","PariInfo");
 		}
 	}
 
@@ -294,19 +308,18 @@ public class ClientUI extends JFrame implements ActionListener {
 	 * @param msg = le message a envoyer au client
 	 * @param code = si "pari" alors on envoie un message pour le pari
 	 */
-	public void sendToServer(String msg, String code) {
+	/*public void sendToServer(String msg, String code) {
 
 		String codePourTraitement = "Chat";
-		if (code.equals("pari")) {
-			codePourTraitement = "Pari";
-			msg = "Pari";
+		if (code.equals("PariInfo")) {
+			codePourTraitement = "PariInfo";
+			msg = "PariInfo";
 		}
-		if (code.equals("score")) {
-			codePourTraitement = "Score";
-			msg = "Pari";
+		if (code.equals("Pari")) {
+			codePourTraitement = "Pari";
+			//msg = msg;
 		}
 		try {
-			
 			//si c'est un nombre
 			if(Tools.isInteger(tfPari.getText())){
 				writer.println(username + ":" + tfPari.getText() + ":" + codePourTraitement);
@@ -315,15 +328,48 @@ public class ClientUI extends JFrame implements ActionListener {
 				tfPari.setBackground(Color.green);
 				tfPari.requestFocus();
 			}else{
-				textArea1.append("Rentrer un chiffre\n");
+				textArea1.append("\n Rentrer un chiffre");
 				//tfPari.setText("");
 				tfPari.setBackground(Color.red);
 				tfPari.requestFocus();
 			}
-			
 		} catch (Exception ex) {
 			textArea1.append("Le message n'a pas été envoyé\n");
 		}
+		
+	}*/
+	
+	/**
+	 * 
+	 * @param msg1 textView (somme)
+	 * @param msg2 numero equipe
+	 * @param code
+	 */
+	public void sendToServer2(String somme,String msg2, String code) {
+		if(code.equals("Pari")){
+			try {
+				//si c'est un nombre
+				if(Tools.isInteger(somme)){
+					writer.println(username + ":" + somme+ ":" + msg2 + ":"+code);
+					writer.flush(); 
+					tfPari.setText("");
+					tfPari.setBackground(Color.green);
+					tfPari.requestFocus();
+				}else{
+					textArea1.append("Rentrer un chiffre\n");
+					//tfPari.setText("");
+					tfPari.setBackground(Color.red);
+					tfPari.requestFocus();
+				}
+			} catch (Exception ex) {
+				textArea1.append("Le message n'a pas été envoyé\n");
+			}
+		}else{
+			//textArea1.append("\n"+username + ":" + somme+ ":" + msg2 + ":"+code);
+			writer.println(username + ":" + somme+ ":" + msg2 + ":"+code);
+			writer.flush(); 
+		}
+		
 		
 	}
 
@@ -338,6 +384,7 @@ public class ClientUI extends JFrame implements ActionListener {
 			String[] data;
 			String stream;
 			String done = "Done";
+			String pari = "Pari";
 			String connect = "Connect";
 			String disconnect = "Disconnect";
 			String chat = "Chat";
@@ -352,7 +399,9 @@ public class ClientUI extends JFrame implements ActionListener {
 					} else if (data[2].equals(connect)) {
 						//textArea1.removeAll();
 						//userAdd(data[0]);
-					} else if (data[2].equals(disconnect)) {
+					} else if (data[2].equals(pari)) {
+						textArea1.append(data[0] + ": " + data[1] + "\n");
+						textArea1.setCaretPosition(textArea1.getDocument().getLength());
 						//userRemove(data[0]);
 					} else if (data[2].equals(done)) {
 						// users.setText("");
