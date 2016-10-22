@@ -14,12 +14,14 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.util.ArrayList;
 
+import javax.swing.ButtonGroup;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
@@ -60,7 +62,11 @@ public class ClientUI extends JFrame implements ActionListener {
 	JLabel jUser = new JLabel(username);
 	JTextField tfPari = new JTextField();
 	JLabel jSeparateur = new JLabel("--------------- PARIER ICI ---------------");
-	JLabel jSeparateur2 = new JLabel("--------------- PARIER ICI ---------------");
+	JRadioButton optionEquipe1 = new JRadioButton("Equipe 1");
+    JRadioButton optionEquipe2  = new JRadioButton("Equipe 2");
+    ButtonGroup group = new ButtonGroup();
+	
+
 
 
 	JButton btPari = new JButton("Parier");
@@ -116,7 +122,7 @@ public class ClientUI extends JFrame implements ActionListener {
 		JPanel pan3 = new JPanel();
 		pan3.setLayout(new GridLayout(9, 1));
 		JPanel panListeBtParis = new JPanel(); //liste des boutons pari
-		panListeBtParis.setLayout(new GridLayout(1, 2));
+		panListeBtParis.setLayout(new GridLayout(1, 4));
 		JPanel panListeJLabel1 = new JPanel(); //liste des labels
 		panListeJLabel1.setLayout(new GridLayout(1, 4));
 		JPanel panListeJLabel2 = new JPanel(); //liste des labels
@@ -153,6 +159,11 @@ public class ClientUI extends JFrame implements ActionListener {
 		btAfficherPari.addActionListener(this);
 		btAfficherPari.setEnabled(false);
 		btInfoTargetList.addActionListener(this);
+		optionEquipe1.addActionListener(this);
+		optionEquipe1.setActionCommand("1"); //donnée récupéré
+		optionEquipe1.setSelected(true); //par defaut equipe 1
+		optionEquipe2.addActionListener(this);
+		optionEquipe2.setActionCommand("2"); //donnée récupéré
 
 		// Ajout dans le JPanel
 		pan1.add(btClean);
@@ -163,6 +174,10 @@ public class ClientUI extends JFrame implements ActionListener {
 		
 		// prend 1 colonne et 1 ligne pour panListeBtParis
 		//panListeBtParis.add(jUser);
+		group.add(optionEquipe1);
+		group.add(optionEquipe2);
+		panListeBtParis.add(optionEquipe1);
+		panListeBtParis.add(optionEquipe2);
 		panListeBtParis.add(tfPari);
 		panListeBtParis.add(btPari);
 		//panListeBtParis.add(btAfficherPari);
@@ -177,6 +192,8 @@ public class ClientUI extends JFrame implements ActionListener {
 		panListeList3.add(paneBut1);
 		panListeList3.add(paneBut2);
 		
+		
+		
 		pan3.add(paneList); //liste de selection du match
 		pan3.add(btInfoTargetList); //bouton de selection du match
 		pan3.add(panListeJLabel1); //Affichage des information sur un match
@@ -189,15 +206,6 @@ public class ClientUI extends JFrame implements ActionListener {
 		pan3.add(panListeBtParis); //Groupement de bouton paris
 		pan3.add(btAfficherPari);
 		
-		/*model.addElement("n.");
-		modelBut1.addElement("111111111");
-		modelBut1.addElement("111111111");
-		modelBut1.addElement("111111111");
-		modelBut2.addElement("2222");*/
-
-
-		
-	
 
 		onglet1.add(pan1, "North"); //en haut
 		onglet1.add(pan2, "Center");//au milieu
@@ -235,6 +243,7 @@ public class ClientUI extends JFrame implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == btClean) {
 			textArea1.setText("Clean\n");
+			//textArea1.setText(group.getSelection().getActionCommand());
 		} else if (e.getSource() == btConnectTCP) {
 			//Bouton "Connexion TCP"
 			if (isConnected == false) {
@@ -285,8 +294,15 @@ public class ClientUI extends JFrame implements ActionListener {
 				e1.printStackTrace();
 			}
 		} else if (e.getSource() == btPari) {
-			//Bouton faire un pari : somme,numero equipe,code
-			sendToServer2(tfPari.getText(),"1", "Pari");
+			//Bouton faire un pari = somme:numMatch:equipe:Pari(code)
+			//le numéro de l'équipe
+			String monEquipe = group.getSelection().getActionCommand();
+			if(list.getSelectedIndex()!=-1){
+				String monNumMatch = Integer.toString(list.getSelectedIndex());
+				sendToServer2(tfPari.getText(),monNumMatch,monEquipe, "Pari");
+			}else{
+				textArea1.append("\nSelectionner un match dans la liste au dessus");
+			}
 		}
 		else if (e.getSource() == btInfoTargetList) {
 			//Bouton Information sur le match sélectionné
@@ -299,58 +315,27 @@ public class ClientUI extends JFrame implements ActionListener {
 			}
 		} else if (e.getSource() == btAfficherPari) {
 			//Bouton afficher somme pari
-			sendToServer2("0", "PariInfo","PariInfo");
+			//le dernier parametre et important car c'est le code
+			sendToServer2("49", "PariInfo","PariInfo","PariInfo");
 		}
 	}
 
-	/**
-	 * 
-	 * @param msg = le message a envoyer au client
-	 * @param code = si "pari" alors on envoie un message pour le pari
-	 */
-	/*public void sendToServer(String msg, String code) {
 
-		String codePourTraitement = "Chat";
-		if (code.equals("PariInfo")) {
-			codePourTraitement = "PariInfo";
-			msg = "PariInfo";
-		}
-		if (code.equals("Pari")) {
-			codePourTraitement = "Pari";
-			//msg = msg;
-		}
-		try {
-			//si c'est un nombre
-			if(Tools.isInteger(tfPari.getText())){
-				writer.println(username + ":" + tfPari.getText() + ":" + codePourTraitement);
-				writer.flush(); 
-				tfPari.setText("");
-				tfPari.setBackground(Color.green);
-				tfPari.requestFocus();
-			}else{
-				textArea1.append("\n Rentrer un chiffre");
-				//tfPari.setText("");
-				tfPari.setBackground(Color.red);
-				tfPari.requestFocus();
-			}
-		} catch (Exception ex) {
-			textArea1.append("Le message n'a pas été envoyé\n");
-		}
-		
-	}*/
 	
 	/**
 	 * 
-	 * @param msg1 textView (somme)
-	 * @param msg2 numero equipe
-	 * @param code
+	 * @param somme
+	 * @param numMatch 1 ou 2 ou 3 etc
+	 * @param equipe 1 ou 2
+	 * @param code Pari ou autre
 	 */
-	public void sendToServer2(String somme,String msg2, String code) {
+	public void sendToServer2(String somme,String numMatch, String equipe, String code) {
 		if(code.equals("Pari")){
 			try {
 				//si c'est un nombre
 				if(Tools.isInteger(somme)){
-					writer.println(username + ":" + somme+ ":" + msg2 + ":"+code);
+					//name:somme:numMatch:equipe:Pari(code)
+					writer.println(username + ":" + somme+ ":" + numMatch +":"+ equipe +":"+code);
 					writer.flush(); 
 					tfPari.setText("");
 					tfPari.setBackground(Color.green);
@@ -366,7 +351,7 @@ public class ClientUI extends JFrame implements ActionListener {
 			}
 		}else{
 			//textArea1.append("\n"+username + ":" + somme+ ":" + msg2 + ":"+code);
-			writer.println(username + ":" + somme+ ":" + msg2 + ":"+code);
+			writer.println(username + ":" + somme+ ":" + numMatch +":"+ equipe +":"+code);
 			writer.flush(); 
 		}
 		

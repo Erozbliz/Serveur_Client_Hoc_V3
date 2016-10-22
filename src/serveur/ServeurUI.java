@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.Executors;
@@ -61,13 +62,15 @@ public class ServeurUI extends JFrame implements ActionListener {
 	// Pour la liste des matchs
 	static ArrayList<Match> listeDesMatch = new ArrayList<Match>();
 	int numeroMatch = 1;
-	
+
 	// Pour la liste des paris
 	//Une liste associé à chaque match contient plusieurs paris 
 	//HashMap<String,Paris> car un utilisateur peut voter que une fois (Hasmap contient des clé unique)
-	static HashMap<String,HashMap<String,Paris>> listeDesParis = new HashMap<String, HashMap<String,Paris>>();
+	static Map<String, HashMap<String, Paris>> listeDesParis = new HashMap<String, HashMap<String, Paris>>();
 	int numeroParis = 1;
-
+	//String user22:numMatch
+	static Map<String, Paris> listeDesParis2 = new HashMap<String, Paris>();
+	
 
 	// Pour l'interface
 	static JTextArea textArea1 = new JTextArea("Serveur Console");
@@ -93,11 +96,11 @@ public class ServeurUI extends JFrame implements ActionListener {
 	public static void appendToTextArea(String text) {
 		textArea1.append(text);
 	}
-	
+
 	public static int getSizeListeMatch() {
 		return listeDesMatch.size();
 	}
-	
+
 	public static ArrayList<Match> getListeMatch() {
 		return listeDesMatch;
 	}
@@ -217,7 +220,8 @@ public class ServeurUI extends JFrame implements ActionListener {
 		if (e.getSource() == btClean) {
 			textArea1.setText("Clean\n");
 		} else if (e.getSource() == btPariInformation) {
-			textArea1.append("\nDéconnexion des clients\n");
+			textArea1.append("\nInformation Pari \n");
+			printAllInfoParis();
 		} else if (e.getSource() == btLaunch) {
 			textArea1.append("\nLancement du serveur TCP sur port : " + portTCP);
 			btLaunch.setEnabled(false);
@@ -233,25 +237,27 @@ public class ServeurUI extends JFrame implements ActionListener {
 			sendToEveryone("Serveur:Envoie manuel:Chat");
 		} else if (e.getSource() == btAjoutMatch) {
 			//Bouton ajouter un match (ajoute aussi une liste pour les paris)
-			String equipe1 = "red"+numeroMatch;
-			String equipe2 = "blue"+numeroMatch;
+			String equipe1 = "red" + numeroMatch;
+			String equipe2 = "blue" + numeroMatch;
 			String crDate = Tools.currentStrDate();
 			listeDesMatch.add(new Match(numeroMatch, crDate, equipe1, equipe2));//ajout match
-			
+
+			//ListeDesParis 1
 			HashMap<String, Paris> valParis = new HashMap<String, Paris>();//ajout d'une liste de paris
 			String stringToInt = Integer.toString(numeroMatch);
 			listeDesParis.put(stringToInt, valParis);//ajout d'une liste de paris
+
+			//ListeDesParis 2
+			//listeDesParis
 			
 			//valParis.put("user1", new Paris(1,"red1",300,"user1"));
 			//valParis.put("user2", new Paris(2,"blue2",400,"user2"));
-			
+
 			//int somme = listeDesParis.get("1").get("user1").getSomme();
 			//textArea1.append("\nsomme: "+somme);
-			
-		
-			//affiche des informations sur les paris
-			printAllInfoParis();
 
+			//affiche des informations sur les paris
+			//printAllInfoParis();
 
 			/*HashMap<String,Paris> acctyp = new HashMap<String,Paris>();
 			HashMap<String, HashMap<String,Paris>> gens = new HashMap<String,HashMap<String,Paris>>();
@@ -263,46 +269,48 @@ public class ServeurUI extends JFrame implements ActionListener {
 			//dans la console
 			textArea1.append("\nAjout d'un Match : " + "n." + numeroMatch + " " + equipe1 + " vs " + equipe2);
 			numeroMatch++;
+			
+		
 		} else if (e.getSource() == btBut1) {
 			String crDate = Tools.currentStrDate();
 			int select = list.getSelectedIndex();
-			if(select!=-1){
+			if (select != -1) {
 				textArea1.append("\n" + crDate + " But equipe 1 du match n." + select);
 				listeDesMatch.get(select).butPourEquipe1(crDate); //ajoute un but + date
-			}else{
+			} else {
 				textArea1.append("\nSelectionner un match");
 			}
-			
+
 		} else if (e.getSource() == btBut2) {
 			String crDate = Tools.currentStrDate();
 			int select = list.getSelectedIndex();
-			if(select!=-1){
+			if (select != -1) {
 				textArea1.append("\n" + crDate + " But equipe 2 du match n." + select);
 				listeDesMatch.get(select).butPourEquipe2(crDate); //ajoute un but
-			}else{
+			} else {
 				textArea1.append("\nSelectionner un match");
 			}
 		} else if (e.getSource() == btPenalty1) {
 			String crDate = Tools.currentStrDate();
 			int select = list.getSelectedIndex();
-			if(select!=-1){
+			if (select != -1) {
 				textArea1.append("\n" + crDate + " Pénalty equipe 1 du match n." + select);
 				listeDesMatch.get(select).penaltyPourEquipe1(); //ajoute un but
-			}else{
+			} else {
 				textArea1.append("\nSelectionner un match");
 			}
 		} else if (e.getSource() == btPenalty2) {
 			String crDate = Tools.currentStrDate();
 			int select = list.getSelectedIndex();
-			if(select!=-1){
+			if (select != -1) {
 				textArea1.append("\n" + crDate + " Pénalty equipe 2 du match n." + select);
 				listeDesMatch.get(select).penaltyPourEquipe2(); //ajoute un but
-			}else{
+			} else {
 				textArea1.append("\nSelectionner un match");
 			}
-		}else if (e.getSource() == btAfficheInfo) {
+		} else if (e.getSource() == btAfficheInfo) {
 			String crDate = Tools.currentStrDate();
-			if(list.getSelectedIndex()!=-1){
+			if (list.getSelectedIndex() != -1) {
 				//-1 si pas d'item sélectionné
 				String strName = (String) list.getSelectedValue();
 				int strIndex = list.getSelectedIndex();
@@ -317,25 +325,22 @@ public class ServeurUI extends JFrame implements ActionListener {
 				List<String> listeButEquipe2 = listeDesMatch.get(strIndex).getListeButEquipe2();
 				String strStatusMatch = listeDesMatch.get(strIndex).getStatusMatch();
 				textArea1.append("\n Information sur " + strName);
-				textArea1.append("\n Equipe "+strNameEquipe1+"/"+strNameEquipe2);
-				textArea1.append("\n Score  "+strButEquipe1+"/"+strButEquipe2);
-				textArea1.append("\n Pénaty "+strPenalty1+"/"+strPenalty2 +"\n"+strStatusMatch);
+				textArea1.append("\n Equipe " + strNameEquipe1 + "/" + strNameEquipe2);
+				textArea1.append("\n Score  " + strButEquipe1 + "/" + strButEquipe2);
+				textArea1.append("\n Pénaty " + strPenalty1 + "/" + strPenalty2 + "\n" + strStatusMatch);
 				textArea1.append("\n Equipe 1 ");
-				for(int i = 0; i < listeButEquipe1.size(); i++) {
-		            textArea1.append("\nBut "+(i+1)+" le "+listeButEquipe1.get(i));
-		        }
+				for (int i = 0; i < listeButEquipe1.size(); i++) {
+					textArea1.append("\nBut " + (i + 1) + " le " + listeButEquipe1.get(i));
+				}
 				textArea1.append("\n Equipe 2 ");
-				for(int i = 0; i < listeButEquipe2.size(); i++) {
-					textArea1.append("\nBut "+(i+1)+" le "+listeButEquipe2.get(i));
-		        }
-			}else{
+				for (int i = 0; i < listeButEquipe2.size(); i++) {
+					textArea1.append("\nBut " + (i + 1) + " le " + listeButEquipe2.get(i));
+				}
+			} else {
 				textArea1.append("\nSelectionner un match");
 			}
-			
-			
 
 		}
-		
 
 	}
 
@@ -379,10 +384,9 @@ public class ServeurUI extends JFrame implements ActionListener {
 					// textArea1.append("Received: " + message + "\n");
 					data = message.split(":");
 
-
 					if (data[2].equals(connect)) {
 						// si name:message/Connect
-						textArea1.append(data[0] + " : " + data[1]+"\n");
+						textArea1.append(data[0] + " : " + data[1] + "\n");
 						sendToEveryone((data[0] + ":" + data[1] + ":" + chat));
 					} else if (data[2].equals(disconnect)) {
 						// sinon si name:message/Disconnect
@@ -391,11 +395,14 @@ public class ServeurUI extends JFrame implements ActionListener {
 					} else if (data[2].equals(chat)) {
 						// sinon si name:message/Chat
 						sendToEveryone(message);
-					} else if (data[3].equals("Pari")) {
-						// sinon si name:message:equipe:Pari
-						textArea1.append(data[0] + " : a parié " + data[1] + "$ pour l'équipe"+data[2]+"\n");
-						sendToEveryone((data[0] + ": a parié " + data[1] + "$ pour l'équipe"+data[2]+":" + pari));
-					} else if (data[3].equals("PariInfo")) {
+					} else if (data[4].equals("Pari")) {
+						// sinon si name:somme:numMatch:equipe:Pari
+						textArea1.append(data[0] + " : a parié " + data[1] + "$ pour l'équipe " + data[3] + " du match "+data[2]+"\n");
+						sendToEveryone((data[0] + ": a parié " + data[1] + "$ pour l'équipe " + data[3] + " du match "+  data[2] +":" + pari));
+						int intEquipe =  Integer.parseInt(data[3]);
+						int intSomme = Integer.parseInt(data[1]);
+						addBet(data[2],data[0],intEquipe,intSomme);
+					} else if (data[4].equals("PariInfo")) {
 						//sinon si name:message:equipe:PariInfo
 						textArea1.append(data[0] + " : a demandé des information sur le pari ");
 						//sendToEveryone((data[0] + ": La somme du pari est de 100$:" + pari));
@@ -505,7 +512,7 @@ public class ServeurUI extends JFrame implements ActionListener {
 	public void sendToEveryone(String message) {
 		Iterator it = clientOutputStreams.iterator();
 		while (it.hasNext()) {
-		//	textArea1.append("-----------"+clientOutputStreams.size()+ ""+ it.next());
+			//	textArea1.append("-----------"+clientOutputStreams.size()+ ""+ it.next());
 			try {
 				PrintWriter writer = (PrintWriter) it.next(); //envoie le message
 				writer.println(message); //ecrit dans la console
@@ -516,7 +523,7 @@ public class ServeurUI extends JFrame implements ActionListener {
 			}
 		}
 	}
-	
+
 	/**
 	 *  A CORRIGER
 	 * @param message
@@ -525,33 +532,46 @@ public class ServeurUI extends JFrame implements ActionListener {
 	public void sendToOne(String message) throws IOException {
 
 		PrintWriter printWriter = new PrintWriter(socketUnique.getOutputStream());
-          printWriter.println(message);
-          printWriter.flush();
+		printWriter.println(message);
+		printWriter.flush();
 
 	}
+
+	public void addBet(String match,String user, int equipe, int somme) {
 	
-	public void printAllInfoParis(){
-		// keys
-		Set<String> keysListe = listeDesParis.keySet();
+		user = user+":"+match;
+		Paris valParis = new Paris(equipe,"equipe",somme,user);
+		listeDesParis2.put(user, valParis);
+
+	}
+
+	public void printAllInfoParis() {
+		String[] data;
+		int i=0;
+		String strI = Integer.toString(i);
 		int sommeEquipe1 = 0;
 		int sommeEquipe2 = 0;
-		// affiche tout les utilisateur dans la liste 1
+		Set<String> keysListe = listeDesParis2.keySet();
 		for (String key : keysListe) {
-		    System.out.println("Paris pour match : "+key);
-		    Set<String> keys1 = listeDesParis.get(key).keySet();
-		    for (String keyUser : keys1) {
-			    System.out.println("Dans match "+key +" "+keyUser+" a parié "+listeDesParis.get(key).get(keyUser).getSomme()+"$ pour l'équipe "+listeDesParis.get(key).get(keyUser).getNameEquipe());
-			    if(listeDesParis.get(key).get(keyUser).getNumEquipe()==1){
-			    	sommeEquipe1 = sommeEquipe1 + listeDesParis.get(key).get(keyUser).getSomme();
-			    }else{
-			    	sommeEquipe2 = sommeEquipe1 + listeDesParis.get(key).get(keyUser).getSomme();
-			    }
-		    }
-		    System.out.println("Paris pour equipe 1 : "+sommeEquipe1);
-		    System.out.println("Paris pour equipe 2 : "+sommeEquipe2);
-		    sommeEquipe1=0;
-		    sommeEquipe2=0;
+			System.out.println("-" + key +" "+ listeDesParis2.get(key).getNumEquipe());
+			data = key.split(":");
+			strI =Integer.toString(i);
+			//numéro du match
+			if(data[1].equals(strI)){
+				if(listeDesParis2.get(key).getNumEquipe()==1){
+					//somme equipe 1
+					sommeEquipe1 = listeDesParis2.get(key).getSomme() + sommeEquipe1;
+				}else{
+					//somme equipe 2
+					sommeEquipe2 = listeDesParis2.get(key).getSomme() + sommeEquipe2;
+				}	
+			}
+			i=i+1;
 		}
+		i=0;
+		System.out.println("sommeEquipe " + sommeEquipe1+"/"+sommeEquipe2);
+		sommeEquipe1=0;
+		sommeEquipe2=0;
 	}
 
 }
