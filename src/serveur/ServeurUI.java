@@ -5,6 +5,7 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.DatagramPacket;
@@ -50,6 +51,7 @@ public class ServeurUI extends JFrame implements ActionListener {
 	// Serveur
 	int portTCP = 2222;
 	int portUDP = 3333;
+	Socket socketUnique;
 
 	// Pour Serveur UDP
 	private DatagramSocket serverSocket; // datagramme
@@ -377,13 +379,6 @@ public class ServeurUI extends JFrame implements ActionListener {
 					// textArea1.append("Received: " + message + "\n");
 					data = message.split(":");
 
-					// data[1] contient le message
-
-					//for (String token : data) { textArea1.append(token +"\n"); }
-
-					
-
-					// shutDownWithKeyword(data[1]);
 
 					if (data[2].equals(connect)) {
 						// si name:message/Connect
@@ -397,13 +392,15 @@ public class ServeurUI extends JFrame implements ActionListener {
 						// sinon si name:message/Chat
 						sendToEveryone(message);
 					} else if (data[3].equals("Pari")) {
-						// sinon si name:message/Pari
+						// sinon si name:message:equipe:Pari
 						textArea1.append(data[0] + " : a parié " + data[1] + "$ pour l'équipe"+data[2]+"\n");
 						sendToEveryone((data[0] + ": a parié " + data[1] + "$ pour l'équipe"+data[2]+":" + pari));
 					} else if (data[3].equals("PariInfo")) {
+						//sinon si name:message:equipe:PariInfo
 						textArea1.append(data[0] + " : a demandé des information sur le pari ");
-						sendToEveryone((data[0] + ": La somme du pari est de 100$:" + pari));
-						sendToOne("sombra",data[0]);
+						//sendToEveryone((data[0] + ": La somme du pari est de 100$:" + pari));
+						//On envoie simplement a la personne qui le demande
+						sendToOne((data[0] + ": La somme du pari est de 1880$:" + pari));
 					} else {
 
 					}
@@ -418,15 +415,14 @@ public class ServeurUI extends JFrame implements ActionListener {
 
 	/**
 	 * Protocol TCP (Socket)
-	 * http://stackoverflow.com/questions/773121/how-can-i-implement-a-threaded-udp-based-server-in-java
 	 * pour udp Permet de lancer le serveur
 	 *
 	 */
 	public class ServerStartTCP implements Runnable {
 		@Override
 		public void run() {
-			//clientOutputStreams = new ArrayList();
-			//users = new ArrayList();
+			clientOutputStreams = new ArrayList();
+			users = new ArrayList();
 
 			try {
 				ServerSocket serverSock = new ServerSocket(portTCP);
@@ -435,7 +431,7 @@ public class ServeurUI extends JFrame implements ActionListener {
 					Socket clientSock = serverSock.accept();
 					PrintWriter writer = new PrintWriter(clientSock.getOutputStream());
 					clientOutputStreams.add(writer);
-
+					socketUnique = clientSock;
 					Thread listener = new Thread(new ClientHandler(clientSock, writer));
 					listener.start();
 					textArea1.append("\n Une connexion à été établie pour les paris \n");
@@ -453,10 +449,6 @@ public class ServeurUI extends JFrame implements ActionListener {
 	public class ServerStartUDP implements Runnable {
 		@Override
 		public void run() {
-			byte[] sendData = new byte[1024];
-			clientOutputStreams = new ArrayList();
-			users = new ArrayList();
-
 			try {
 				final DatagramSocket serverSocket = new DatagramSocket(portUDP);
 				while (true) {
@@ -528,21 +520,14 @@ public class ServeurUI extends JFrame implements ActionListener {
 	/**
 	 *  A CORRIGER
 	 * @param message
+	 * @throws IOException 
 	 */
-	public void sendToOne(String message, String user) {
-		ArrayList aaaaaa = new ArrayList();
-		aaaaaa.add(user);
-		Iterator it = aaaaaa.iterator();
-		while (it.hasNext()) {
-			try {
-				PrintWriter writer = (PrintWriter) it.next(); //envoie le message
-				writer.println(message); //ecrit dans la console
-				writer.flush();
-				//textArea1.setCaretPosition(textArea1.getDocument().getLength());
-			} catch (Exception ex) {
-				textArea1.append("Erreur envoie au client sendToOne\n");
-			}
-		}
+	public void sendToOne(String message) throws IOException {
+
+		PrintWriter printWriter = new PrintWriter(socketUnique.getOutputStream());
+          printWriter.println(message);
+          printWriter.flush();
+
 	}
 	
 	public void printAllInfoParis(){
