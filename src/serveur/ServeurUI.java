@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
@@ -34,6 +35,7 @@ import javax.swing.JTextArea;
 import org.apache.log4j.Logger;
 
 import objet.Match;
+import objet.Paris;
 import test.RejectedExecutionHandlerImpl;
 import tools.Tools;
 
@@ -57,15 +59,20 @@ public class ServeurUI extends JFrame implements ActionListener {
 	// Pour la liste des matchs
 	static ArrayList<Match> listeDesMatch = new ArrayList<Match>();
 	int numeroMatch = 1;
+	
 	// Pour la liste des paris
-	HashMap hmParis = new HashMap();
+	//Une liste associé à chaque match contient plusieurs paris 
+	//HashMap<String,Paris> car un utilisateur peut voter que une fois (Hasmap contient des clé unique)
+	static HashMap<String,HashMap<String,Paris>> listeDesParis = new HashMap<String, HashMap<String,Paris>>();
+	int numeroParis = 1;
+
 
 	// Pour l'interface
 	static JTextArea textArea1 = new JTextArea("Serveur Console");
 	JButton btClean = new JButton("Effacer");
 	JButton btLaunch = new JButton("Lancer Serveur");
 	JButton btSent = new JButton("Envoyer message aux clients");
-	JButton btDisconnectAllClients = new JButton("Deconnexion");
+	JButton btPariInformation = new JButton("Info Paris");
 
 	//Pour les Matchs
 	JButton btAjoutMatch = new JButton("Ajouter Match");
@@ -142,7 +149,7 @@ public class ServeurUI extends JFrame implements ActionListener {
 		btClean.addActionListener(this);
 		btSent.addActionListener(this);
 		btLaunch.addActionListener(this);
-		btDisconnectAllClients.addActionListener(this);
+		btPariInformation.addActionListener(this);
 		// --- Matchs   ---
 		btAjoutMatch.addActionListener(this);
 		btBut1.addActionListener(this);
@@ -155,7 +162,7 @@ public class ServeurUI extends JFrame implements ActionListener {
 		pan1.add(btLaunch);
 		pan1.add(btClean);
 		pan1.add(btSent);
-		pan1.add(btDisconnectAllClients);
+		pan1.add(btPariInformation);
 		pan2.add(scrollPane);
 
 		//Ajout dans le gridlayout (Matchs)
@@ -207,7 +214,7 @@ public class ServeurUI extends JFrame implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == btClean) {
 			textArea1.setText("Clean\n");
-		} else if (e.getSource() == btDisconnectAllClients) {
+		} else if (e.getSource() == btPariInformation) {
 			textArea1.append("\nDéconnexion des clients\n");
 		} else if (e.getSource() == btLaunch) {
 			textArea1.append("\nLancement du serveur TCP sur port : " + portTCP);
@@ -222,10 +229,57 @@ public class ServeurUI extends JFrame implements ActionListener {
 			textArea1.append("\nEnvoie manuel");
 			sendToEveryone("Serveur:Envoie manuel:Chat");
 		} else if (e.getSource() == btAjoutMatch) {
+			//Bouton ajouter un match (ajoute aussi une liste pour les paris)
 			String equipe1 = "red"+numeroMatch;
 			String equipe2 = "blue"+numeroMatch;
 			String crDate = Tools.currentStrDate();
-			listeDesMatch.add(new Match(numeroMatch, crDate, equipe1, equipe2));
+			listeDesMatch.add(new Match(numeroMatch, crDate, equipe1, equipe2));//ajout match
+			
+			HashMap<String, Paris> valParis = new HashMap<String, Paris>();//ajout d'une liste de paris
+			//valParis.put("user1", nouveauParis); //ajoute un paris
+			String stringToInt = Integer.toString(numeroMatch);
+			listeDesParis.put(stringToInt, valParis);
+			
+			valParis.put("user1", new Paris(1,"red1",300,"user1"));
+			valParis.put("user2", new Paris(2,"blue2",400,"user2"));
+			
+			//int somme = listeDesParis.get("1").get("user1").getSomme();
+			//textArea1.append("\nsomme: "+somme);
+			
+			// Get keys
+			Set<String> keysListe = listeDesParis.keySet();
+			int sommeEquipe1 = 0;
+			int sommeEquipe2 = 0;
+			// affiche tout les utilisateur dans la liste 1
+			for (String key : keysListe) {
+			    System.out.println("Paris pour match : "+key);
+			    Set<String> keys1 = listeDesParis.get(key).keySet();
+			    for (String keyUser : keys1) {
+				    System.out.println("Dans match "+key +" "+keyUser+" a parié "+listeDesParis.get(key).get(keyUser).getSomme()+"$ pour l'équipe "+listeDesParis.get(key).get(keyUser).getNameEquipe());
+				    if(listeDesParis.get(key).get(keyUser).getNumEquipe()==1){
+				    	sommeEquipe1 = sommeEquipe1 + listeDesParis.get(key).get(keyUser).getSomme();
+				    }else{
+				    	sommeEquipe2 = sommeEquipe1 + listeDesParis.get(key).get(keyUser).getSomme();
+				    }
+			    }
+			    System.out.println("Paris pour equipe 1 : "+sommeEquipe1);
+			    System.out.println("Paris pour equipe 2 : "+sommeEquipe2);
+			    sommeEquipe1=0;
+			    sommeEquipe2=0;
+			}
+
+
+
+
+			
+			
+			
+			
+			/*HashMap<String,Paris> acctyp = new HashMap<String,Paris>();
+			HashMap<String, HashMap<String,Paris>> gens = new HashMap<String,HashMap<String,Paris>>();
+			acctyp.put("user1", nouveauParis);
+			gens.put("1", acctyp);*/
+
 			//ajout dans la liste de selection
 			model.addElement("n." + numeroMatch + " " + equipe1 + " vs " + equipe2);
 			//dans la console

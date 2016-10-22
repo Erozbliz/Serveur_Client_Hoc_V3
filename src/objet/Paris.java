@@ -8,35 +8,25 @@ import java.io.Serializable;
  */
 public class Paris implements Serializable{
 
-	private Match match;
 	private int somme;
-	private String equipe;
+	private int numEquipe; // 1 ou 2
+	private String nameEquipe;
 	private String utilisateur;
 
 	/**
 	 * 
-	 * @param match
 	 * @param equipe
 	 * @param somme
 	 * @param utilisateur
 	 */
-	public Paris(Match match, String equipe, int somme, String utilisateur) {
-		this.match = match;
-		this.equipe = equipe;
+	public Paris(int numEquipe, String nameEquipe, int somme, String utilisateur) {
+		this.numEquipe = numEquipe;
+		this.nameEquipe = nameEquipe;
 		this.somme = somme;
 		this.utilisateur = utilisateur;
 	}
-
-	//----- GETTER ET SETTER ----
-
 	
-	public Match getMatch() {
-		return match;
-	}
-
-	public void setMatch(Match match) {
-		this.match = match;
-	}
+	//----- GETTER ET SETTER ----
 
 	public int getSomme() {
 		return somme;
@@ -46,12 +36,20 @@ public class Paris implements Serializable{
 		this.somme = somme;
 	}
 
-	public String getEquipe() {
-		return equipe;
+	public int getNumEquipe() {
+		return numEquipe;
 	}
 
-	public void setEquipe(String equipe) {
-		this.equipe = equipe;
+	public void setNumEquipe(int numEquipe) {
+		this.numEquipe = numEquipe;
+	}
+
+	public String getNameEquipe() {
+		return nameEquipe;
+	}
+
+	public void setNameEquipe(String nameEquipe) {
+		this.nameEquipe = nameEquipe;
 	}
 
 	public String getUtilisateur() {
@@ -61,6 +59,10 @@ public class Paris implements Serializable{
 	public void setUtilisateur(String utilisateur) {
 		this.utilisateur = utilisateur;
 	}
+
+
+	
+
 
 	
 }
