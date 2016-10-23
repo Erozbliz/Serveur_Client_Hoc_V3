@@ -53,7 +53,6 @@ public class ServeurUI extends JFrame implements ActionListener {
 	// Serveur
 	int portTCP = 2222;
 	int portUDP = 3333;
-	Socket socketUnique;
 	int serveurRun = 0;
 
 	// Pour Serveur UDP
@@ -482,8 +481,8 @@ public class ServeurUI extends JFrame implements ActionListener {
 						textArea1.append(data[0] + " : a demandé des information sur le pari ");
 						//sendToEveryone((data[0] + ": La somme du pari est de 100$:" + pari));
 						//On envoie simplement a la personne qui le demande
-						String all = printAllInfoParis();
-						sendToOne((data[0] + ":Merci d'attendre la fin de match[Confirmation du Serveur]:" + pari));
+						//String all = printAllInfoParis();
+						sendToOne((data[0] + ":Merci d'attendre la fin de match[Confirmation du Serveur]:" + pari),sock);
 					} else {
 
 					}
@@ -514,7 +513,6 @@ public class ServeurUI extends JFrame implements ActionListener {
 					Socket clientSock = serverSock.accept();
 					PrintWriter writer = new PrintWriter(clientSock.getOutputStream());
 					clientOutputStreams.add(writer);
-					socketUnique = clientSock;
 					Thread listener = new Thread(new ClientHandler(clientSock, writer));
 					listener.start();
 					textArea1.append("\n Une connexion à été établie pour les paris \n");
@@ -607,8 +605,8 @@ public class ServeurUI extends JFrame implements ActionListener {
 	 * @param message
 	 * @throws IOException 
 	 */
-	public void sendToOne(String message) throws IOException {
-		PrintWriter printWriter = new PrintWriter(socketUnique.getOutputStream());
+	public void sendToOne(String message, Socket s) throws IOException {
+		PrintWriter printWriter = new PrintWriter(s.getOutputStream());
 		printWriter.println(message);
 		printWriter.flush();
 	}

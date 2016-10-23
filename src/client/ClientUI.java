@@ -239,7 +239,6 @@ public class ClientUI extends JFrame implements ActionListener {
 		} else if (e.getSource() == btConnectTCP) {
 			//Bouton "Connexion TCP"
 			if (isConnected == false) {
-
 				//Génère un utilisateur aléatoire
 				String user = Tools.randUser();
 				username = user;
@@ -263,20 +262,25 @@ public class ClientUI extends JFrame implements ActionListener {
 					textArea1.append("\n Erreur : Serveur non trouvé \n");
 					//tf_username.setEditable(true);
 				}
-
 				ListenThread();
-
 			} else if (isConnected == true) {
-				textArea1.append("You are already connected. \n");
+				textArea1.append("Vous etes deja connecté \n");
+			}
+			//on rafraichie les matchs
+			try {
+				model.removeAllElements(); //ne pas oublier
+				messageUDP("score");
+			} catch (Exception e1) {
+				e1.printStackTrace();
 			}
 
 		} else if (e.getSource() == btSentMsgUDPdefault) {
 			//Bouton MessageUDP
-			try {
+			/*try {
 				messageUDP("test");
 			} catch (Exception e1) {
 				e1.printStackTrace();
-			}
+			}*/
 		} else if (e.getSource() == btScore) {
 			//Bouton Afficher la liste des matchs
 			try {
