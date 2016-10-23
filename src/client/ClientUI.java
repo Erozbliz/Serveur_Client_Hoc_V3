@@ -6,12 +6,14 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.Timer;
 
@@ -279,15 +281,15 @@ public class ClientUI extends JFrame implements ActionListener {
 			}
 
 		} else if (e.getSource() == btSentMsgUDPdefault) {
-			if(autoRefresh==false){
-				autoRefresh=true;
+			if (autoRefresh == false) {
+				autoRefresh = true;
 				timer = new Timer();//Déclaration d'un nouveau timer
 				model.removeAllElements(); //ne pas oublier
 				timer.schedule(new TimeTask(), 0, 120000);
 				textArea1.append("\n rafraichissement auto activé");
 				btSentMsgUDPdefault.setBackground(Color.GREEN);
-			}else{
-				autoRefresh=false;
+			} else {
+				autoRefresh = false;
 				timer.cancel();
 				timer.purge();
 				textArea1.append("\n rafraichissement auto désactivé");
@@ -306,16 +308,16 @@ public class ClientUI extends JFrame implements ActionListener {
 			//le numéro de l'équipe
 			String monEquipe = group.getSelection().getActionCommand();
 			if (list.getSelectedIndex() != -1) {
-				int i=list.getSelectedIndex();
+				int i = list.getSelectedIndex();
 				boolean a = listeDesMatch.get(i).getStatusMatch().equals("PERIODE 3");
 				boolean b = listeDesMatch.get(i).getStatusMatch().equals("TERMINE");
 				//Impossible de parier pour un match en periode 3 ou terminé
-				if(!a || !b){
+				if (!a || !b) {
 					String monNumMatch = Integer.toString(list.getSelectedIndex());
 					sendToServer2(tfPari.getText(), monNumMatch, monEquipe, "Pari");
-				}else{
+				} else {
 					textArea1.append("\nImpossible de voter car Période 3 ou Match Terminé");
-				}	
+				}
 			} else {
 				textArea1.append("\nSelectionner un match dans la liste au dessus");
 			}
@@ -424,33 +426,44 @@ public class ClientUI extends JFrame implements ActionListener {
 		byte[] receiveData = new byte[1024];
 		sendData = sentence.getBytes();
 		DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, IPAddress, portUDP);
-		clientSocket.send(sendPacket);
+		clientSocket.setSoTimeout(2000);
+		try {
+			clientSocket.send(sendPacket);
+		} catch (SocketTimeoutException e) {
+			textArea1.append("\n pas de serveur ");
+		}
 
 		// Datagram reçu par le serveur
 		DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
-		clientSocket.receive(receivePacket);
+		try {
+			clientSocket.receive(receivePacket);
+		} catch (SocketTimeoutException e) {
+			textArea1.append("\n pas de serveur ");
+		}
 
 		//on récupere la liste des matchs dans la réponse du serveur
-		listeDesMatch = (ArrayList<Match>) Serialisation.deserialize2(receivePacket.getData());
+		try {
+			listeDesMatch = (ArrayList<Match>) Serialisation.deserialize2(receivePacket.getData());
+			//a garder
+			//String modifiedSentence = new String(receivePacket.getData(), 0, receivePacket.getLength());
 
-		//a garder
-		//String modifiedSentence = new String(receivePacket.getData(), 0, receivePacket.getLength());
+			textArea1.append("\n Il y a " + listeDesMatch.size() + " matchs");
 
-		textArea1.append("\n Il y a " + listeDesMatch.size() + " matchs");
+			//int i=0;
+			for (int i = 0; i < listeDesMatch.size(); i++) {
+				model.addElement("Match n." + (i + 1) + " " + listeDesMatch.get(i).getNameEquipe1() + " vs "
+						+ listeDesMatch.get(i).getNameEquipe2() + " le " + listeDesMatch.get(i).getDate());
+			}
+			//On affiche les info pour le 1er match
+			printInfoSelectMatch(0);
 
-		//int i=0;
-		for (int i = 0; i < listeDesMatch.size(); i++) {
-			model.addElement("Match n." + (i + 1) + " " + listeDesMatch.get(i).getNameEquipe1() + " vs "
-					+ listeDesMatch.get(i).getNameEquipe2() + " le " + listeDesMatch.get(i).getDate());
+		} catch (IOException e) {
+			textArea1.append("\n objet vide ");
 		}
-		//On affiche les info pour le 1er match
-		printInfoSelectMatch(0);
 
 		clientSocket.close(); // On ferme la socket
 		System.out.println("Socket Client close");
 	}
-	
-
 
 	/**
 	 * Affiche les informations d'un match sélectionné

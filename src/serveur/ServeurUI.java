@@ -203,7 +203,7 @@ public class ServeurUI extends JFrame implements ActionListener {
 		pannel.add(onglets);
 		frame.getContentPane().add(pannel);
 		frame.setVisible(true);
-
+		logger.info("Construction de l'interface");
 	}
 
 	/**
@@ -213,8 +213,10 @@ public class ServeurUI extends JFrame implements ActionListener {
 	 */
 	public static void main(String[] args) {
 
+		logger.info("Lancement du programme");
 		// Lancement de l'interface
 		new ServeurUI();
+		
 
 	}
 
