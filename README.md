@@ -1,4 +1,4 @@
-## Presensation
+## Presentation
 
 Votre objectif est de construire le système HockeyLive permettant de suivre "en direct", sur un téléphone cellulaire 
 Android, le déroulement d’un match de hockey et de parier en-ligne. Vous anticipez avoir 200 000 clients connectés

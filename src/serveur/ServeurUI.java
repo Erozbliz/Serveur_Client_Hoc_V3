@@ -36,6 +36,7 @@ import javax.swing.JTextArea;
 
 import org.apache.log4j.Logger;
 
+import objet.Cagnotte;
 import objet.Match;
 import objet.Paris;
 import test.RejectedExecutionHandlerImpl;
@@ -66,10 +67,11 @@ public class ServeurUI extends JFrame implements ActionListener {
 	// Pour la liste des paris
 	//Une liste associé à chaque match contient plusieurs paris 
 	//HashMap<String,Paris> car un utilisateur peut voter que une fois (Hasmap contient des clé unique)
-	static Map<String, HashMap<String, Paris>> listeDesParis = new HashMap<String, HashMap<String, Paris>>();
-	int numeroParis = 1;
-	//String user22:numMatch
+	//static Map<String, HashMap<String, Paris>> listeDesParis = new HashMap<String, HashMap<String, Paris>>();
+	//int numeroParis = 1;
+	//dans le String user22:numMatch
 	static Map<String, Paris> listeDesParis2 = new HashMap<String, Paris>();
+	static ArrayList<Cagnotte> listeCagnotte2 = new ArrayList<Cagnotte>();
 	
 
 	// Pour l'interface
@@ -91,6 +93,8 @@ public class ServeurUI extends JFrame implements ActionListener {
 	JButton btPenalty1 = new JButton("Pénalty Equipe 1");
 	JButton btPenalty2 = new JButton("Pénalty Equipe 2");
 	JButton btAfficheInfo = new JButton("Affiche les informations");
+	JButton btMiTemps= new JButton("Mi-temps");
+	JButton btFinMatch= new JButton("Fin du match");
 
 	// Pour modifier le textArea d'une autre classe (ServeurUI.appendToTextArea("texte");)
 	public static void appendToTextArea(String text) {
@@ -132,9 +136,11 @@ public class ServeurUI extends JFrame implements ActionListener {
 		JPanel pan2 = new JPanel();
 		pan2.setLayout(new GridLayout(1, 1));
 		JPanel pan3 = new JPanel();
-		pan3.setLayout(new GridLayout(4, 1));
+		pan3.setLayout(new GridLayout(5, 1));
 		JPanel panListeBt = new JPanel(); //liste des boutons
 		panListeBt.setLayout(new GridLayout(1, 4));
+		JPanel panListeBt2 = new JPanel(); //liste des boutons mitemp et fin
+		panListeBt2.setLayout(new GridLayout(1, 2));
 
 		onglet1.setPreferredSize(new Dimension(700, 400));
 		onglets.addTab("Menu", onglet1);
@@ -162,7 +168,9 @@ public class ServeurUI extends JFrame implements ActionListener {
 		btPenalty1.addActionListener(this);
 		btPenalty2.addActionListener(this);
 		btAfficheInfo.addActionListener(this);
-
+		btMiTemps.addActionListener(this);
+		btFinMatch.addActionListener(this);
+		
 		// Ajout dans le JPanel (Lancement)
 		pan1.add(btLaunch);
 		pan1.add(btClean);
@@ -175,10 +183,15 @@ public class ServeurUI extends JFrame implements ActionListener {
 		panListeBt.add(btBut2);
 		panListeBt.add(btPenalty1);
 		panListeBt.add(btPenalty2);
+		
+		//Ajout bouton mitemps et gin
+		panListeBt2.add(btMiTemps);
+		panListeBt2.add(btFinMatch);
 
 		pan3.add(btAjoutMatch);
 		pan3.add(paneList);
 		pan3.add(panListeBt); //gridlayout qui contient une liste de bouton
+		pan3.add(panListeBt2);
 		pan3.add(btAfficheInfo);
 
 		onglet1.add(pan1, "North"); //en haut
@@ -241,11 +254,12 @@ public class ServeurUI extends JFrame implements ActionListener {
 			String equipe2 = "blue" + numeroMatch;
 			String crDate = Tools.currentStrDate();
 			listeDesMatch.add(new Match(numeroMatch, crDate, equipe1, equipe2));//ajout match
+			listeCagnotte2.add(new Cagnotte());
 
 			//ListeDesParis 1
-			HashMap<String, Paris> valParis = new HashMap<String, Paris>();//ajout d'une liste de paris
-			String stringToInt = Integer.toString(numeroMatch);
-			listeDesParis.put(stringToInt, valParis);//ajout d'une liste de paris
+			//HashMap<String, Paris> valParis = new HashMap<String, Paris>();//ajout d'une liste de paris
+			//String stringToInt = Integer.toString(numeroMatch);
+			//listeDesParis.put(stringToInt, valParis);//ajout d'une liste de paris
 
 			//ListeDesParis 2
 			//listeDesParis
@@ -339,7 +353,20 @@ public class ServeurUI extends JFrame implements ActionListener {
 			} else {
 				textArea1.append("\nSelectionner un match");
 			}
-
+		} else if (e.getSource() == btMiTemps) {
+			int select = list.getSelectedIndex();
+			if (select != -1) {
+				listeDesMatch.get(select).setStatusMatch("MI-TEMPS");
+			}else{
+				textArea1.append("\nSelectionner un match");
+			}
+		}else if (e.getSource() == btFinMatch) {
+			int select = list.getSelectedIndex();
+			if (select != -1) {
+				listeDesMatch.get(select).setStatusMatch("TERMINE");
+			}else{
+				textArea1.append("\nSelectionner un match");
+			}
 		}
 
 	}
@@ -401,6 +428,7 @@ public class ServeurUI extends JFrame implements ActionListener {
 						sendToEveryone((data[0] + ": a parié " + data[1] + "$ pour l'équipe " + data[3] + " du match "+  data[2] +":" + pari));
 						int intEquipe =  Integer.parseInt(data[3]);
 						int intSomme = Integer.parseInt(data[1]);
+						textArea1.append("Ajout à la cagnote\n");
 						addBet(data[2],data[0],intEquipe,intSomme);
 					} else if (data[4].equals("PariInfo")) {
 						//sinon si name:message:equipe:PariInfo
@@ -538,40 +566,32 @@ public class ServeurUI extends JFrame implements ActionListener {
 	}
 
 	public void addBet(String match,String user, int equipe, int somme) {
-	
-		user = user+":"+match;
-		Paris valParis = new Paris(equipe,"equipe",somme,user);
-		listeDesParis2.put(user, valParis);
-
+		String userWithMatch = user+":"+match;
+		Paris valParis = new Paris(equipe,"equipe",somme,userWithMatch);
+		listeDesParis2.put(userWithMatch, valParis);
+		int intMatch = Integer.parseInt(match);
+		listeCagnotte2.get(intMatch).addParis(user, somme, equipe);
 	}
 
 	public void printAllInfoParis() {
-		String[] data;
-		int i=0;
-		String strI = Integer.toString(i);
-		int sommeEquipe1 = 0;
-		int sommeEquipe2 = 0;
 		Set<String> keysListe = listeDesParis2.keySet();
 		for (String key : keysListe) {
-			System.out.println("-" + key +" "+ listeDesParis2.get(key).getNumEquipe());
-			data = key.split(":");
-			strI =Integer.toString(i);
-			//numéro du match
-			if(data[1].equals(strI)){
-				if(listeDesParis2.get(key).getNumEquipe()==1){
-					//somme equipe 1
-					sommeEquipe1 = listeDesParis2.get(key).getSomme() + sommeEquipe1;
-				}else{
-					//somme equipe 2
-					sommeEquipe2 = listeDesParis2.get(key).getSomme() + sommeEquipe2;
-				}	
-			}
-			i=i+1;
+			System.out.println("-" + key +" "+ listeDesParis2.get(key).getNumEquipe() + " "+listeDesParis2.get(key).getSomme()+"$");
 		}
-		i=0;
-		System.out.println("sommeEquipe " + sommeEquipe1+"/"+sommeEquipe2);
-		sommeEquipe1=0;
-		sommeEquipe2=0;
+
+		for(int j=0;j<listeCagnotte2.size();j++){
+			int sGlobal= listeCagnotte2.get(j).getSommeTotal();
+			int sEquipe1= listeCagnotte2.get(j).getSommeTotal();
+			int sEquipe2= listeCagnotte2.get(j).getSommeTotal();
+			System.out.println("-Somme total " + sGlobal +"$");
+			System.out.println("-Si Equipe 1 gagne chaque joueur qui ont choisie l'équipe 1 gagne " + sEquipe1+"$");
+			System.out.println("-Si Equipe 2 gagne chaque joueur qui ont choisie l'équipe 2 gagne " + sEquipe2+"$");
+			textArea1.append("\n-Somme total " + sGlobal +"$");
+			textArea1.append("\n-Si Equipe 1 gagne chaque joueur qui ont choisie l'équipe 1 gagne " + sEquipe1+"$");
+			textArea1.append("\n-Si Equipe 2 gagne chaque joueur qui ont choisie l'équipe 2 gagne " + sEquipe2+"$");
+		}
+	
+		
 	}
 
 }

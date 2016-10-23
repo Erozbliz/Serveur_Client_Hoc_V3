@@ -447,7 +447,7 @@ public class ClientUI extends JFrame implements ActionListener {
 	 */
 	public void printInfoSelectMatch(int numMatch){
 		if(listeDesMatch.size()>=1){
-			textArea1.append("\n Affichage des données pour le match "+(numMatch+1));
+			textArea1.append("\n Affichage des données pour le match "+(numMatch+1)+"\n");
 			jEquipe.setText("Equipe : " + listeDesMatch.get(numMatch).getNameEquipe1() +" / " +listeDesMatch.get(numMatch).getNameEquipe2());
 			jBut.setText("But : " + listeDesMatch.get(numMatch).getButEquipe1() +" / " +listeDesMatch.get(numMatch).getButEquipe2());
 			jPenalty.setText("Pénalty : " + listeDesMatch.get(numMatch).getPenaltyEquipe1() +" / " +listeDesMatch.get(numMatch).getPenaltyEquipe2());

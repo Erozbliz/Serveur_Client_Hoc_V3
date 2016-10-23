@@ -3,7 +3,7 @@ package objet;
 import java.io.Serializable;
 
 /**
- * S’occupe d'enregistrer les paris sur les matchs.
+ * S’occupe d'enregistrer les paris pour un utilisateur.
  *
  */
 public class Paris implements Serializable{
