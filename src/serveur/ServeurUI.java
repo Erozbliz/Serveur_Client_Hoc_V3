@@ -54,6 +54,7 @@ public class ServeurUI extends JFrame implements ActionListener {
 	int portTCP = 2222;
 	int portUDP = 3333;
 	Socket socketUnique;
+	int serveurRun = 0;
 
 	// Pour Serveur UDP
 	private DatagramSocket serverSocket; // datagramme
@@ -77,7 +78,7 @@ public class ServeurUI extends JFrame implements ActionListener {
 	static JTextArea textArea1 = new JTextArea("Serveur Console");
 	JButton btClean = new JButton("Effacer");
 	JButton btLaunch = new JButton("Lancer Serveur");
-	JButton btSent = new JButton("Envoyer message aux clients");
+	JButton btSent = new JButton("Envoyer message ");
 	JButton btPariInformation = new JButton("Info Paris");
 
 	//Pour les Matchs
@@ -92,7 +93,9 @@ public class ServeurUI extends JFrame implements ActionListener {
 	JButton btPenalty1 = new JButton("Pénalty Equipe 1");
 	JButton btPenalty2 = new JButton("Pénalty Equipe 2");
 	JButton btAfficheInfo = new JButton("Affiche les informations");
-	JButton btMiTemps = new JButton("Mi-temps");
+	JButton btPremierPeriode = new JButton("PERIODE 1");
+	JButton btDeuxiemePeriode = new JButton("PERIODE 2");
+	JButton btTroisiemePeriode = new JButton("PERIODE 3");
 	JButton btFinMatch = new JButton("Fin du match");
 
 	// Pour modifier le textArea d'une autre classe (ServeurUI.appendToTextArea("texte");)
@@ -120,7 +123,7 @@ public class ServeurUI extends JFrame implements ActionListener {
 
 		JFrame frame = new JFrame();
 		frame.setTitle("Serveur Hoc");
-		frame.setSize(700, 400);
+		frame.setSize(720, 400);
 		frame.setResizable(false);
 		JPanel pannel = new JPanel();
 
@@ -139,9 +142,9 @@ public class ServeurUI extends JFrame implements ActionListener {
 		JPanel panListeBt = new JPanel(); //liste des boutons
 		panListeBt.setLayout(new GridLayout(1, 4));
 		JPanel panListeBt2 = new JPanel(); //liste des boutons mitemp et fin
-		panListeBt2.setLayout(new GridLayout(1, 2));
+		panListeBt2.setLayout(new GridLayout(1, 4));
 
-		onglet1.setPreferredSize(new Dimension(700, 400));
+		onglet1.setPreferredSize(new Dimension(720, 400));
 		onglets.addTab("Menu", onglet1);
 
 		// Déclaration texte
@@ -167,7 +170,9 @@ public class ServeurUI extends JFrame implements ActionListener {
 		btPenalty1.addActionListener(this);
 		btPenalty2.addActionListener(this);
 		btAfficheInfo.addActionListener(this);
-		btMiTemps.addActionListener(this);
+		btPremierPeriode.addActionListener(this);
+		btDeuxiemePeriode.addActionListener(this);
+		btTroisiemePeriode.addActionListener(this);
 		btFinMatch.addActionListener(this);
 
 		// Ajout dans le JPanel (Lancement)
@@ -184,7 +189,9 @@ public class ServeurUI extends JFrame implements ActionListener {
 		panListeBt.add(btPenalty2);
 
 		//Ajout bouton mitemps et gin
-		panListeBt2.add(btMiTemps);
+		panListeBt2.add(btPremierPeriode);
+		panListeBt2.add(btDeuxiemePeriode);
+		panListeBt2.add(btTroisiemePeriode);
 		panListeBt2.add(btFinMatch);
 
 		pan3.add(btAjoutMatch);
@@ -244,6 +251,7 @@ public class ServeurUI extends JFrame implements ActionListener {
 			textArea1.append("\nLancement du serveur UDP sur port : " + portUDP + "\n");
 			Thread serverPoolUDP = new Thread(new ServerStartUDP());
 			serverPoolUDP.start();
+			serveurRun = 1;
 		} else if (e.getSource() == btSent) {
 			textArea1.append("\nEnvoie manuel");
 			sendToEveryone("Serveur:Envoie manuel:Chat");
@@ -351,10 +359,10 @@ public class ServeurUI extends JFrame implements ActionListener {
 			} else {
 				textArea1.append("\nSelectionner un match");
 			}
-		} else if (e.getSource() == btMiTemps) {
+		} else if (e.getSource() == btPremierPeriode) {
 			int select = list.getSelectedIndex();
 			if (select != -1) {
-				listeDesMatch.get(select).setStatusMatch("MI-TEMPS");
+				listeDesMatch.get(select).setStatusMatch("PERIODE 1");
 			} else {
 				textArea1.append("\nSelectionner un match");
 			}
@@ -362,23 +370,38 @@ public class ServeurUI extends JFrame implements ActionListener {
 			int select = list.getSelectedIndex();
 			if (select != -1) {
 				listeDesMatch.get(select).setStatusMatch("TERMINE");
-				int butE1 =listeDesMatch.get(select).getButEquipe1();
-				int butE2 =listeDesMatch.get(select).getButEquipe2();
-				String listDesGagnants ="";
-				if(butE1 == butE2){
-					listDesGagnants = listeCagnotte2.get(select).getStrListUserEquipe1()+listeCagnotte2.get(select).getStrListUserEquipe2();
-					textArea1.append("\nMatch nul " +listDesGagnants);
-					sendToEveryone("Serveur:Match nul, liste des gagnants "+listDesGagnants+":Chat");
-				}else if(butE1<butE2){
+				int butE1 = listeDesMatch.get(select).getButEquipe1();
+				int butE2 = listeDesMatch.get(select).getButEquipe2();
+				String listDesGagnants = "";
+				if (butE1 == butE2) {
+					listDesGagnants = listeCagnotte2.get(select).getStrListUserEquipe1()
+							+ listeCagnotte2.get(select).getStrListUserEquipe2();
+					textArea1.append("\nMatch nul " + listDesGagnants);
+					sendToEveryone("Serveur:Match nul, liste des gagnants " + listDesGagnants + ":Chat");
+				} else if (butE1 < butE2) {
 					listDesGagnants = listeCagnotte2.get(select).getStrListUserEquipe2();
-					textArea1.append("\nEquipe 2 a gagné "+listDesGagnants);
-					sendToEveryone("Serveur:Equipe 2 a gagné, liste des gagnants"+listDesGagnants+":Chat");
-				}else{
+					textArea1.append("\nEquipe 2 a gagné " + listDesGagnants);
+					sendToEveryone("Serveur:Equipe 2 a gagné, liste des gagnants" + listDesGagnants + ":Chat");
+				} else {
 					listDesGagnants = listeCagnotte2.get(select).getStrListUserEquipe1();
-					textArea1.append("\nEquipe 1 a gagné "+listDesGagnants);
-					sendToEveryone("Serveur:Equipe 1 a gagné, liste des gagnants"+listDesGagnants+":Chat");
+					textArea1.append("\nEquipe 1 a gagné " + listDesGagnants);
+					sendToEveryone("Serveur:Equipe 1 a gagné, liste des gagnants" + listDesGagnants + ":Chat");
 				}
-				
+
+			} else {
+				textArea1.append("\nSelectionner un match");
+			}
+		} else if (e.getSource() == btDeuxiemePeriode) {
+			int select = list.getSelectedIndex();
+			if (select != -1) {
+				listeDesMatch.get(select).setStatusMatch("PERIODE 2");
+			} else {
+				textArea1.append("\nSelectionner un match");
+			}
+		} else if (e.getSource() == btTroisiemePeriode) {
+			int select = list.getSelectedIndex();
+			if (select != -1) {
+				listeDesMatch.get(select).setStatusMatch("PERIODE 3");
 			} else {
 				textArea1.append("\nSelectionner un match");
 			}
@@ -438,6 +461,10 @@ public class ServeurUI extends JFrame implements ActionListener {
 						// sinon si name:message/Chat
 						sendToEveryone(message);
 					} else if (data[4].equals("Pari")) {
+						int intNumMatch= Integer.parseInt(data[2]);
+						boolean a = listeDesMatch.get(intNumMatch).getStatusMatch().equals("PERIODE 3");
+						boolean b = listeDesMatch.get(intNumMatch).getStatusMatch().equals("TERMINE");
+						if((!a) && (!b)){
 						// sinon si name:somme:numMatch:equipe:Pari
 						textArea1.append(data[0] + " : a parié " + data[1] + "$ pour l'équipe " + data[3] + " du match "
 								+ data[2] + "\n");
@@ -447,13 +474,16 @@ public class ServeurUI extends JFrame implements ActionListener {
 						int intSomme = Integer.parseInt(data[1]);
 						textArea1.append("Ajout à la cagnote\n");
 						addBet(data[2], data[0], intEquipe, intSomme);
+						}else{
+							sendToEveryone((data[0] + ": Impossible match en Période 3 ou terminé [Confirmation du Serveur]:" + pari));
+						}	
 					} else if (data[4].equals("PariInfo")) {
 						//sinon si name:message:equipe:PariInfo
 						textArea1.append(data[0] + " : a demandé des information sur le pari ");
 						//sendToEveryone((data[0] + ": La somme du pari est de 100$:" + pari));
 						//On envoie simplement a la personne qui le demande
 						String all = printAllInfoParis();
-						sendToOne((data[0] + ":Merci d'attendre la fin de match:" + pari));
+						sendToOne((data[0] + ":Merci d'attendre la fin de match[Confirmation du Serveur]:" + pari));
 					} else {
 
 					}
@@ -556,15 +586,19 @@ public class ServeurUI extends JFrame implements ActionListener {
 	 * @param message
 	 */
 	public void sendToEveryone(String message) {
-		Iterator it = clientOutputStreams.iterator();
-		while (it.hasNext()) {
-			try {
-				PrintWriter writer = (PrintWriter) it.next(); //envoie le message
-				writer.println(message); //ecrit dans la console
-				writer.flush();
-			} catch (Exception ex) {
-				textArea1.append("Erreur envoie aux clients \n");
+		if(serveurRun==1){
+			Iterator it = clientOutputStreams.iterator();
+			while (it.hasNext()) {
+				try {
+					PrintWriter writer = (PrintWriter) it.next(); //envoie le message
+					writer.println(message); //ecrit dans la console
+					writer.flush();
+				} catch (Exception ex) {
+					textArea1.append("Erreur envoie aux clients \n");
+				}
 			}
+		}else{
+			textArea1.append("Lancer le serveur pour l'envoie \n");
 		}
 	}
 
@@ -611,8 +645,9 @@ public class ServeurUI extends JFrame implements ActionListener {
 			textArea1.append("\n-Si Equipe 2 gagne chaque joueur qui ont choisie l'équipe 2 gagne " + sEquipe2+"$");
 			*/
 		}
-
 		return all;
 	}
+	
+
 
 }

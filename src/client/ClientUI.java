@@ -55,7 +55,7 @@ public class ClientUI extends JFrame implements ActionListener {
 	// Pour l'interface
 	static JTextArea textArea1 = new JTextArea("Client Console");
 	JButton btClean = new JButton("Effacer");
-	JButton btConnectTCP = new JButton("Connexion TCP");
+	JButton btConnectTCP = new JButton("Connexion pour Pari");
 	JButton btSentMsgUDPdefault = new JButton("Message UDP");
 	JButton btScore = new JButton("Actualiser");
 	JLabel jUser = new JLabel(username);
@@ -290,8 +290,16 @@ public class ClientUI extends JFrame implements ActionListener {
 			//le numéro de l'équipe
 			String monEquipe = group.getSelection().getActionCommand();
 			if (list.getSelectedIndex() != -1) {
-				String monNumMatch = Integer.toString(list.getSelectedIndex());
-				sendToServer2(tfPari.getText(), monNumMatch, monEquipe, "Pari");
+				int i=list.getSelectedIndex();
+				boolean a = listeDesMatch.get(i).getStatusMatch().equals("PERIODE 3");
+				boolean b = listeDesMatch.get(i).getStatusMatch().equals("TERMINE");
+				//Impossible de parier pour un match en periode 3 ou terminé
+				if(!a || !b){
+					String monNumMatch = Integer.toString(list.getSelectedIndex());
+					sendToServer2(tfPari.getText(), monNumMatch, monEquipe, "Pari");
+				}else{
+					textArea1.append("\nImpossible de voter car Période 3 ou Match Terminé");
+				}	
 			} else {
 				textArea1.append("\nSelectionner un match dans la liste au dessus");
 			}

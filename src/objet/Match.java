@@ -44,7 +44,7 @@ public class Match implements Serializable{
 		listeButEquipe2 = new ArrayList<String>();
 		penaltyEquipe1 = 0;
 		penaltyEquipe2 = 0;
-		statusMatch = "EN COURS";
+		statusMatch = "PERIODE 1";
 
 	}
 
