@@ -13,6 +13,7 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Timer;
 
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultListModel;
@@ -39,10 +40,13 @@ public class ClientUI extends JFrame implements ActionListener {
 
 	// Serveur
 	String addressTCP = "localhost";
-	int portTCP = 2222;
-	int portUDP = 3333;
+	static int portTCP = 2222;
+	static int portUDP = 3333;
 
 	Boolean isConnected = false;
+	//Rafraichissement auto
+	Timer timer;
+	boolean autoRefresh = false;
 
 	String username = "Se connecter d'abord  ";
 	Socket sock;
@@ -50,13 +54,13 @@ public class ClientUI extends JFrame implements ActionListener {
 	PrintWriter writer;
 
 	//Contient la liste des matchs recu par le serveur
-	ArrayList<Match> listeDesMatch;
+	static ArrayList<Match> listeDesMatch;
 
 	// Pour l'interface
 	static JTextArea textArea1 = new JTextArea("Client Console");
 	JButton btClean = new JButton("Effacer");
-	JButton btConnectTCP = new JButton("Connexion pour Pari");
-	JButton btSentMsgUDPdefault = new JButton("Message UDP");
+	JButton btConnectTCP = new JButton("Connexion Pari");
+	JButton btSentMsgUDPdefault = new JButton("Auto Actualisation");
 	JButton btScore = new JButton("Actualiser");
 	JLabel jUser = new JLabel(username);
 	JTextField tfPari = new JTextField();
@@ -68,20 +72,20 @@ public class ClientUI extends JFrame implements ActionListener {
 	JButton btPari = new JButton("Parier");
 	JButton btAfficherPari = new JButton("Afficher Somme");
 	// Liste des matchs
-	DefaultListModel model = new DefaultListModel();
+	static DefaultListModel model = new DefaultListModel();
 	JList list = new JList(model);
 	//fin listes
 	JButton btInfoTargetList = new JButton("Information sur le match sélectionné");
-	JLabel jEquipe = new JLabel("");
-	JLabel jBut = new JLabel("");
-	JLabel jPenalty = new JLabel("");
-	JLabel jStatus = new JLabel("");
-	JLabel jChrono = new JLabel("");
-	JLabel jListeDesBut = new JLabel("Liste des buts");
+	static JLabel jEquipe = new JLabel("");
+	static JLabel jBut = new JLabel("");
+	static JLabel jPenalty = new JLabel("");
+	static JLabel jStatus = new JLabel("");
+	static JLabel jChrono = new JLabel("");
+	static JLabel jListeDesBut = new JLabel("Liste des buts");
 	// Liste
-	DefaultListModel modelBut1 = new DefaultListModel();
+	static DefaultListModel modelBut1 = new DefaultListModel();
 	JList listBut1 = new JList(modelBut1);
-	DefaultListModel modelBut2 = new DefaultListModel();
+	static DefaultListModel modelBut2 = new DefaultListModel();
 	JList listBut2 = new JList(modelBut2);
 	//fin listes
 
@@ -275,17 +279,25 @@ public class ClientUI extends JFrame implements ActionListener {
 			}
 
 		} else if (e.getSource() == btSentMsgUDPdefault) {
-			//Bouton MessageUDP
-			/*try {
-				messageUDP("test");
-			} catch (Exception e1) {
-				e1.printStackTrace();
-			}*/
+			if(autoRefresh==false){
+				autoRefresh=true;
+				timer = new Timer();//Déclaration d'un nouveau timer
+				model.removeAllElements(); //ne pas oublier
+				timer.schedule(new TimeTask(), 0, 120000);
+				textArea1.append("\n rafraichissement auto activé");
+				btSentMsgUDPdefault.setBackground(Color.GREEN);
+			}else{
+				autoRefresh=false;
+				timer.cancel();
+				timer.purge();
+				textArea1.append("\n rafraichissement auto désactivé");
+				btSentMsgUDPdefault.setBackground(null);
+			}
 		} else if (e.getSource() == btScore) {
 			//Bouton Afficher la liste des matchs
 			try {
 				model.removeAllElements(); //ne pas oublier
-				messageUDP("score");
+				messageUDP("score");//demande le score
 			} catch (Exception e1) {
 				e1.printStackTrace();
 			}
@@ -403,7 +415,7 @@ public class ClientUI extends JFrame implements ActionListener {
 	 * @param sentence
 	 * @throws Exception
 	 */
-	public void messageUDP(String sentence) throws Exception {
+	public static void messageUDP(String sentence) throws Exception {
 		System.out.println("--CLIENT--");
 		//BufferedReader inFromUser = new BufferedReader(new InputStreamReader(System.in));
 		DatagramSocket clientSocket = new DatagramSocket();
@@ -437,12 +449,14 @@ public class ClientUI extends JFrame implements ActionListener {
 		clientSocket.close(); // On ferme la socket
 		System.out.println("Socket Client close");
 	}
+	
+
 
 	/**
 	 * Affiche les informations d'un match sélectionné
 	 * @param numMatch = numéro du match dans la liste (attention pour match 1 mettre 0)
 	 */
-	public void printInfoSelectMatch(int numMatch) {
+	static public void printInfoSelectMatch(int numMatch) {
 		if (listeDesMatch.size() >= 1) {
 			textArea1.append("\n Affichage des données pour le match " + (numMatch + 1) + "\n");
 			jEquipe.setText("Equipe : " + listeDesMatch.get(numMatch).getNameEquipe1() + " / "

@@ -446,7 +446,7 @@ public class ServeurUI extends JFrame implements ActionListener {
 						}
 					} else if (data[4].equals("PariInfo")) {
 						//sinon si name:message:equipe:PariInfo
-						textArea1.append(data[0] + " : a demandé des information sur le pari ");
+						textArea1.append(data[0] + " : a demandé des information sur le pari \n");
 						//sendToEveryone((data[0] + ": La somme du pari est de 100$:" + pari));
 						//On envoie simplement a la personne qui le demande
 						//String all = printAllInfoParis();
@@ -550,6 +550,7 @@ public class ServeurUI extends JFrame implements ActionListener {
 
 	/**
 	 * Envoie d'un message à tous le monde
+	 * Utilise TCP
 	 * @param message
 	 */
 	public void sendToEveryone(String message) {
@@ -570,7 +571,8 @@ public class ServeurUI extends JFrame implements ActionListener {
 	}
 
 	/**
-	 *  Envoie a une seule personne
+	 * Envoie a une seule personne
+	 * Utilise TCP
 	 * @param message
 	 * @throws IOException 
 	 */
