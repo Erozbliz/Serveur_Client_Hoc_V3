@@ -48,6 +48,9 @@ import tools.Tools;
  */
 public class ServeurUI extends JFrame implements ActionListener {
 
+	//logger log4j voir mylogfile.log
+	private static Logger logger = Logger.getLogger(ServeurUI.class);
+	
 	// Serveur
 	int portTCP = 2222;
 	int portUDP = 3333;
@@ -103,7 +106,7 @@ public class ServeurUI extends JFrame implements ActionListener {
 	// Liste des utilisateurs
 	ArrayList clientOutputStreams;
 	ArrayList<String> users;
-	private static Logger logger = Logger.getLogger(ServeurUI.class);
+
 
 	/**
 	 * Interface
@@ -203,7 +206,7 @@ public class ServeurUI extends JFrame implements ActionListener {
 		pannel.add(onglets);
 		frame.getContentPane().add(pannel);
 		frame.setVisible(true);
-		logger.info("Construction de l'interface");
+		logger.info("Construction de l'interface Serveur");
 	}
 
 	/**
@@ -213,7 +216,7 @@ public class ServeurUI extends JFrame implements ActionListener {
 	 */
 	public static void main(String[] args) {
 
-		logger.info("Lancement du programme");
+		logger.info("Lancement du programme Serveur");
 		// Lancement de l'interface
 		new ServeurUI();
 		
@@ -393,7 +396,8 @@ public class ServeurUI extends JFrame implements ActionListener {
 				InputStreamReader isReader = new InputStreamReader(sock.getInputStream());
 				reader = new BufferedReader(isReader);
 			} catch (Exception ex) {
-				textArea1.append("Unexpected error... \n");
+				logger.debug("Probleme dans le Client Handler " +ex);
+				textArea1.append("Probleme dans le Client Handler \n");
 			}
 
 		}
@@ -460,6 +464,7 @@ public class ServeurUI extends JFrame implements ActionListener {
 				}
 			} catch (Exception ex) {
 				textArea1.append("Connexion perdue. \n");
+				logger.debug("Message reçu par le client erroné "+ex);
 				ex.printStackTrace();
 				clientOutputStreams.remove(client);
 			}
@@ -489,6 +494,7 @@ public class ServeurUI extends JFrame implements ActionListener {
 					textArea1.append("\n Une connexion à été établie pour les paris \n");
 				}
 			} catch (Exception ex) {
+				logger.debug("Erreur de connexion (port déjà utilisé) "+ex);
 				textArea1.append("Erreur de connexion (port déjà utilisé) \n");
 			}
 		}
@@ -541,10 +547,10 @@ public class ServeurUI extends JFrame implements ActionListener {
 				}
 
 			} catch (Exception e) {
+				logger.debug("Error Server "+e);
 				System.err.println("Error Server");
 				e.printStackTrace();
 			} finally {
-				// poolThread.shutdown();
 				serverSocket.close();
 			}
 		}
@@ -564,6 +570,7 @@ public class ServeurUI extends JFrame implements ActionListener {
 					writer.println(message); //ecrit dans la console
 					writer.flush();
 				} catch (Exception ex) {
+					logger.debug("Erreur envoie aux clients "+ex);
 					textArea1.append("Erreur envoie aux clients \n");
 				}
 			}

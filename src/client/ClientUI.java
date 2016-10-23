@@ -39,6 +39,9 @@ import tools.Serialisation;
 import tools.Tools;
 
 public class ClientUI extends JFrame implements ActionListener {
+	
+	//logger log4j voir mylogfile.log
+	private static Logger logger = Logger.getLogger(ServeurUI.class);
 
 	// Serveur
 	String addressTCP = "localhost";
@@ -96,8 +99,8 @@ public class ClientUI extends JFrame implements ActionListener {
 		textArea1.append(text);
 	}
 
-	// Liste des utilisateurs
-	private static Logger logger = Logger.getLogger(ServeurUI.class);
+
+	
 
 	/**
 	 * Interface
@@ -221,7 +224,7 @@ public class ClientUI extends JFrame implements ActionListener {
 		pannel.add(onglets);
 		frame.getContentPane().add(pannel);
 		frame.setVisible(true);
-
+		logger.info("Construction de l'interface Serveur");
 	}
 
 	/**
@@ -230,6 +233,7 @@ public class ClientUI extends JFrame implements ActionListener {
 	 * @param args
 	 */
 	public static void main(String[] args) {
+		logger.info("Lancement du programme Client");
 		// Lancement de l'interface
 		new ClientUI();
 	}
@@ -265,6 +269,7 @@ public class ClientUI extends JFrame implements ActionListener {
 					btPari.setEnabled(true); //maintenant l'utilisateur peut parier
 					btAfficherPari.setEnabled(true);//maintenant l'utilisateur peut afficher les scores
 				} catch (Exception ex) {
+					logger.debug("Erreur : Serveur non trouvé "+ex);
 					textArea1.append("\n Erreur : Serveur non trouvé \n");
 					//tf_username.setEditable(true);
 				}
@@ -277,6 +282,7 @@ public class ClientUI extends JFrame implements ActionListener {
 				model.removeAllElements(); //ne pas oublier
 				messageUDP("score");
 			} catch (Exception e1) {
+				logger.debug("Erreur : "+e1);
 				e1.printStackTrace();
 			}
 
@@ -301,6 +307,7 @@ public class ClientUI extends JFrame implements ActionListener {
 				model.removeAllElements(); //ne pas oublier
 				messageUDP("score");//demande le score
 			} catch (Exception e1) {
+				logger.debug("Erreur : "+e1);
 				e1.printStackTrace();
 			}
 		} else if (e.getSource() == btPari) {
@@ -362,6 +369,7 @@ public class ClientUI extends JFrame implements ActionListener {
 					tfPari.requestFocus();
 				}
 			} catch (Exception ex) {
+				logger.debug("Erreur : message non envoyé "+ex);
 				textArea1.append("Le message n'a pas été envoyé\n");
 			}
 		} else {
@@ -408,6 +416,7 @@ public class ClientUI extends JFrame implements ActionListener {
 					}
 				}
 			} catch (Exception ex) {
+				logger.debug(ex);
 			}
 		}
 	}
@@ -430,6 +439,7 @@ public class ClientUI extends JFrame implements ActionListener {
 		try {
 			clientSocket.send(sendPacket);
 		} catch (SocketTimeoutException e) {
+			logger.debug("Erreur : pas de serveur "+e);
 			textArea1.append("\n pas de serveur ");
 		}
 
@@ -438,6 +448,7 @@ public class ClientUI extends JFrame implements ActionListener {
 		try {
 			clientSocket.receive(receivePacket);
 		} catch (SocketTimeoutException e) {
+			logger.debug("Erreur : pas de serveur "+e);
 			textArea1.append("\n pas de serveur ");
 		}
 
@@ -458,6 +469,7 @@ public class ClientUI extends JFrame implements ActionListener {
 			printInfoSelectMatch(0);
 
 		} catch (IOException e) {
+			logger.debug("Erreur objet vide :  "+e);
 			textArea1.append("\n objet vide ");
 		}
 
