@@ -56,7 +56,7 @@ public class Cagnotte implements Serializable {
 		int sommeTotal = getSommeTotal();
 		int sommeRecuParChacun = sommeTotal;
 		int nombreDeParticpant = listeUserPourEquipe1.size();
-		if(nombreDeParticpant!=0){
+		if (nombreDeParticpant != 0) {
 			sommeRecuParChacun = sommeTotal / nombreDeParticpant;
 		}
 		return sommeRecuParChacun;
@@ -67,10 +67,30 @@ public class Cagnotte implements Serializable {
 		int sommeTotal = getSommeTotal();
 		int sommeRecuParChacun = sommeTotal;
 		int nombreDeParticpant = listeUserPourEquipe2.size();
-		if(nombreDeParticpant!=0){
+		if (nombreDeParticpant != 0) {
 			sommeRecuParChacun = sommeTotal / nombreDeParticpant;
 		}
 		return sommeRecuParChacun;
+	}
+	
+	public String getStrListUserEquipe1(){
+		Set<String> keys = listeUserPourEquipe1.keySet();
+		String strList = "";
+		for (String key : keys) {
+			//key= key+",";
+			strList = strList + key+",";
+		}
+		return strList;
+	}
+	
+	public String getStrListUserEquipe2(){
+		Set<String> keys = listeUserPourEquipe2.keySet();
+		String strList = "";
+		for (String key : keys) {
+			//key= key+",";
+			strList = strList + key+",";
+		}
+		return strList;
 	}
 
 	//----- GETTER ET SETTER ----

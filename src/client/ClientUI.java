@@ -48,10 +48,9 @@ public class ClientUI extends JFrame implements ActionListener {
 	Socket sock;
 	BufferedReader reader;
 	PrintWriter writer;
-	
+
 	//Contient la liste des matchs recu par le serveur
 	ArrayList<Match> listeDesMatch;
-
 
 	// Pour l'interface
 	static JTextArea textArea1 = new JTextArea("Client Console");
@@ -63,11 +62,8 @@ public class ClientUI extends JFrame implements ActionListener {
 	JTextField tfPari = new JTextField();
 	JLabel jSeparateur = new JLabel("--------------- PARIER ICI ---------------");
 	JRadioButton optionEquipe1 = new JRadioButton("Equipe 1");
-    JRadioButton optionEquipe2  = new JRadioButton("Equipe 2");
-    ButtonGroup group = new ButtonGroup();
-	
-
-
+	JRadioButton optionEquipe2 = new JRadioButton("Equipe 2");
+	ButtonGroup group = new ButtonGroup();
 
 	JButton btPari = new JButton("Parier");
 	JButton btAfficherPari = new JButton("Afficher Somme");
@@ -112,7 +108,6 @@ public class ClientUI extends JFrame implements ActionListener {
 
 		// Premier Onglet
 		JPanel onglet1 = new JPanel();
-		
 
 		//Panel pour les rangées ligne,colonne
 		JPanel pan1 = new JPanel();
@@ -171,7 +166,7 @@ public class ClientUI extends JFrame implements ActionListener {
 		pan1.add(btSentMsgUDPdefault);
 		pan1.add(btScore);
 		pan2.add(scrollPane);
-		
+
 		// prend 1 colonne et 1 ligne pour panListeBtParis
 		//panListeBtParis.add(jUser);
 		group.add(optionEquipe1);
@@ -181,19 +176,17 @@ public class ClientUI extends JFrame implements ActionListener {
 		panListeBtParis.add(tfPari);
 		panListeBtParis.add(btPari);
 		//panListeBtParis.add(btAfficherPari);
-		
+
 		// prend 1 colonne et 1 ligne pour panListeBtParis
 		panListeJLabel1.add(jEquipe);
 		panListeJLabel1.add(jBut);
 		panListeJLabel1.add(jPenalty);
 		panListeJLabel1.add(jStatus);
-		
+
 		// prend 1 colonne et 1 ligne pour panListeBtParis
 		panListeList3.add(paneBut1);
 		panListeList3.add(paneBut2);
-		
-		
-		
+
 		pan3.add(paneList); //liste de selection du match
 		pan3.add(btInfoTargetList); //bouton de selection du match
 		pan3.add(panListeJLabel1); //Affichage des information sur un match
@@ -205,7 +198,6 @@ public class ClientUI extends JFrame implements ActionListener {
 		pan3.add(jUser);
 		pan3.add(panListeBtParis); //Groupement de bouton paris
 		pan3.add(btAfficherPari);
-		
 
 		onglet1.add(pan1, "North"); //en haut
 		onglet1.add(pan2, "Center");//au milieu
@@ -247,7 +239,7 @@ public class ClientUI extends JFrame implements ActionListener {
 		} else if (e.getSource() == btConnectTCP) {
 			//Bouton "Connexion TCP"
 			if (isConnected == false) {
-				
+
 				//Génère un utilisateur aléatoire
 				String user = Tools.randUser();
 				username = user;
@@ -297,31 +289,28 @@ public class ClientUI extends JFrame implements ActionListener {
 			//Bouton faire un pari = somme:numMatch:equipe:Pari(code)
 			//le numéro de l'équipe
 			String monEquipe = group.getSelection().getActionCommand();
-			if(list.getSelectedIndex()!=-1){
+			if (list.getSelectedIndex() != -1) {
 				String monNumMatch = Integer.toString(list.getSelectedIndex());
-				sendToServer2(tfPari.getText(),monNumMatch,monEquipe, "Pari");
-			}else{
+				sendToServer2(tfPari.getText(), monNumMatch, monEquipe, "Pari");
+			} else {
 				textArea1.append("\nSelectionner un match dans la liste au dessus");
 			}
-		}
-		else if (e.getSource() == btInfoTargetList) {
+		} else if (e.getSource() == btInfoTargetList) {
 			//Bouton Information sur le match sélectionné
-			if(list.getSelectedIndex()!=-1){
+			if (list.getSelectedIndex() != -1) {
 				//-1 si pas d'item sélectionné
 				int index = list.getSelectedIndex();
 				printInfoSelectMatch(index);
-			}else{
+			} else {
 				textArea1.append("\nSelectionner un match");
 			}
 		} else if (e.getSource() == btAfficherPari) {
 			//Bouton afficher somme pari
 			//le dernier parametre et important car c'est le code
-			sendToServer2("49", "PariInfo","PariInfo","PariInfo");
+			sendToServer2("49", "PariInfo", "PariInfo", "PariInfo");
 		}
 	}
 
-
-	
 	/**
 	 * 
 	 * @param somme
@@ -329,18 +318,18 @@ public class ClientUI extends JFrame implements ActionListener {
 	 * @param equipe 1 ou 2
 	 * @param code Pari ou autre
 	 */
-	public void sendToServer2(String somme,String numMatch, String equipe, String code) {
-		if(code.equals("Pari")){
+	public void sendToServer2(String somme, String numMatch, String equipe, String code) {
+		if (code.equals("Pari")) {
 			try {
 				//si c'est un nombre
-				if(Tools.isInteger(somme)){
+				if (Tools.isInteger(somme)) {
 					//name:somme:numMatch:equipe:Pari(code)
-					writer.println(username + ":" + somme+ ":" + numMatch +":"+ equipe +":"+code);
-					writer.flush(); 
+					writer.println(username + ":" + somme + ":" + numMatch + ":" + equipe + ":" + code);
+					writer.flush();
 					tfPari.setText("");
 					tfPari.setBackground(Color.green);
 					tfPari.requestFocus();
-				}else{
+				} else {
 					textArea1.append("Rentrer un chiffre\n");
 					//tfPari.setText("");
 					tfPari.setBackground(Color.red);
@@ -349,13 +338,12 @@ public class ClientUI extends JFrame implements ActionListener {
 			} catch (Exception ex) {
 				textArea1.append("Le message n'a pas été envoyé\n");
 			}
-		}else{
+		} else {
 			//textArea1.append("\n"+username + ":" + somme+ ":" + msg2 + ":"+code);
-			writer.println(username + ":" + somme+ ":" + numMatch +":"+ equipe +":"+code);
-			writer.flush(); 
+			writer.println(username + ":" + somme + ":" + numMatch + ":" + equipe + ":" + code);
+			writer.flush();
 		}
-		
-		
+
 	}
 
 	public void ListenThread() {
@@ -377,8 +365,7 @@ public class ClientUI extends JFrame implements ActionListener {
 			try {
 				while ((stream = reader.readLine()) != null) {
 					data = stream.split(":");
-
-					if (data[2].equals(chat)) {
+					if (data[2].equals("Chat")) {
 						textArea1.append(data[0] + ": " + data[1] + "\n");
 						textArea1.setCaretPosition(textArea1.getDocument().getLength());
 					} else if (data[2].equals(connect)) {
@@ -398,8 +385,7 @@ public class ClientUI extends JFrame implements ActionListener {
 			}
 		}
 	}
-	
-	
+
 	/**
 	 * Envoie d'un message UDP
 	 * @param sentence
@@ -415,51 +401,55 @@ public class ClientUI extends JFrame implements ActionListener {
 		sendData = sentence.getBytes();
 		DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, IPAddress, portUDP);
 		clientSocket.send(sendPacket);
-		
 
 		// Datagram reçu par le serveur
 		DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
 		clientSocket.receive(receivePacket);
 
 		//on récupere la liste des matchs dans la réponse du serveur
-		 listeDesMatch = (ArrayList<Match>) Serialisation.deserialize2(receivePacket.getData());
+		listeDesMatch = (ArrayList<Match>) Serialisation.deserialize2(receivePacket.getData());
 
-		 //a garder
-		 //String modifiedSentence = new String(receivePacket.getData(), 0, receivePacket.getLength());
-		
-		textArea1.append("\n Il y a "+listeDesMatch.size()+" matchs");
-		
+		//a garder
+		//String modifiedSentence = new String(receivePacket.getData(), 0, receivePacket.getLength());
+
+		textArea1.append("\n Il y a " + listeDesMatch.size() + " matchs");
+
 		//int i=0;
-		for(int i=0;i< listeDesMatch.size(); i++){
-			model.addElement("Match n."+(i+1)+ " " + listeDesMatch.get(i).getNameEquipe1()+" vs " +  listeDesMatch.get(i).getNameEquipe2()+ " le " +listeDesMatch.get(i).getDate());
+		for (int i = 0; i < listeDesMatch.size(); i++) {
+			model.addElement("Match n." + (i + 1) + " " + listeDesMatch.get(i).getNameEquipe1() + " vs "
+					+ listeDesMatch.get(i).getNameEquipe2() + " le " + listeDesMatch.get(i).getDate());
 		}
 		//On affiche les info pour le 1er match
 		printInfoSelectMatch(0);
-	
 
 		clientSocket.close(); // On ferme la socket
 		System.out.println("Socket Client close");
 	}
-	
+
 	/**
 	 * Affiche les informations d'un match sélectionné
 	 * @param numMatch = numéro du match dans la liste (attention pour match 1 mettre 0)
 	 */
-	public void printInfoSelectMatch(int numMatch){
-		if(listeDesMatch.size()>=1){
-			textArea1.append("\n Affichage des données pour le match "+(numMatch+1)+"\n");
-			jEquipe.setText("Equipe : " + listeDesMatch.get(numMatch).getNameEquipe1() +" / " +listeDesMatch.get(numMatch).getNameEquipe2());
-			jBut.setText("But : " + listeDesMatch.get(numMatch).getButEquipe1() +" / " +listeDesMatch.get(numMatch).getButEquipe2());
-			jPenalty.setText("Pénalty : " + listeDesMatch.get(numMatch).getPenaltyEquipe1() +" / " +listeDesMatch.get(numMatch).getPenaltyEquipe2());
+	public void printInfoSelectMatch(int numMatch) {
+		if (listeDesMatch.size() >= 1) {
+			textArea1.append("\n Affichage des données pour le match " + (numMatch + 1) + "\n");
+			jEquipe.setText("Equipe : " + listeDesMatch.get(numMatch).getNameEquipe1() + " / "
+					+ listeDesMatch.get(numMatch).getNameEquipe2());
+			jBut.setText("But : " + listeDesMatch.get(numMatch).getButEquipe1() + " / "
+					+ listeDesMatch.get(numMatch).getButEquipe2());
+			jPenalty.setText("Pénalty : " + listeDesMatch.get(numMatch).getPenaltyEquipe1() + " / "
+					+ listeDesMatch.get(numMatch).getPenaltyEquipe2());
 			jStatus.setText("Status : " + listeDesMatch.get(numMatch).getStatusMatch());
 			modelBut1.removeAllElements();
 			modelBut2.removeAllElements();
-			for(int i = 0; i < listeDesMatch.get(numMatch).getListeButEquipe1().size(); i++) {
-				modelBut1.addElement("\nBut "+(i+1)+" le "+listeDesMatch.get(numMatch).getListeButEquipe1().get(i));
-	        }
-			for(int i = 0; i < listeDesMatch.get(numMatch).getListeButEquipe2().size(); i++) {
-				modelBut2.addElement("\nBut "+(i+1)+" le "+listeDesMatch.get(numMatch).getListeButEquipe2().get(i));
-	        }
+			for (int i = 0; i < listeDesMatch.get(numMatch).getListeButEquipe1().size(); i++) {
+				modelBut1.addElement(
+						"\nBut " + (i + 1) + " le " + listeDesMatch.get(numMatch).getListeButEquipe1().get(i));
+			}
+			for (int i = 0; i < listeDesMatch.get(numMatch).getListeButEquipe2().size(); i++) {
+				modelBut2.addElement(
+						"\nBut " + (i + 1) + " le " + listeDesMatch.get(numMatch).getListeButEquipe2().get(i));
+			}
 		}
 	}
 
