@@ -42,11 +42,9 @@ import objet.Paris;
 import test.RejectedExecutionHandlerImpl;
 import tools.Tools;
 
-/***
- * Si probleme de port faire :
- * netstat -ano | find ":2222" & netstat -ano | find ":3333"
- * TASKKILL /PID 111111 -f
- *
+/**
+ * SERVEUR TCP UDP
+ * 
  */
 public class ServeurUI extends JFrame implements ActionListener {
 
@@ -65,10 +63,6 @@ public class ServeurUI extends JFrame implements ActionListener {
 	int numeroMatch = 1;
 
 	// Pour la liste des paris
-	//Une liste associé à chaque match contient plusieurs paris 
-	//HashMap<String,Paris> car un utilisateur peut voter que une fois (Hasmap contient des clé unique)
-	//static Map<String, HashMap<String, Paris>> listeDesParis = new HashMap<String, HashMap<String, Paris>>();
-	//int numeroParis = 1;
 	//dans le String user22:numMatch
 	static Map<String, Paris> listeDesParis2 = new HashMap<String, Paris>();
 	static ArrayList<Cagnotte> listeCagnotte2 = new ArrayList<Cagnotte>();
@@ -100,10 +94,6 @@ public class ServeurUI extends JFrame implements ActionListener {
 	// Pour modifier le textArea d'une autre classe (ServeurUI.appendToTextArea("texte");)
 	public static void appendToTextArea(String text) {
 		textArea1.append(text);
-	}
-
-	public static int getSizeListeMatch() {
-		return listeDesMatch.size();
 	}
 
 	public static ArrayList<Match> getListeMatch() {
@@ -217,8 +207,8 @@ public class ServeurUI extends JFrame implements ActionListener {
 	}
 
 	/**
-	 * Main
-	 * 
+	 * Main 
+	 * Lancement de l'interface
 	 * @param args
 	 */
 	public static void main(String[] args) {
@@ -226,8 +216,6 @@ public class ServeurUI extends JFrame implements ActionListener {
 		// Lancement de l'interface
 		new ServeurUI();
 
-		//creation liste pour les matchs
-		//	listeDesMatch = new ArrayList<Match>();
 	}
 
 	/**
@@ -261,28 +249,6 @@ public class ServeurUI extends JFrame implements ActionListener {
 			String crDate = Tools.currentStrDate();
 			listeDesMatch.add(new Match(numeroMatch, crDate, equipe1, equipe2));//ajout match
 			listeCagnotte2.add(new Cagnotte());
-
-			//ListeDesParis 1
-			//HashMap<String, Paris> valParis = new HashMap<String, Paris>();//ajout d'une liste de paris
-			//String stringToInt = Integer.toString(numeroMatch);
-			//listeDesParis.put(stringToInt, valParis);//ajout d'une liste de paris
-
-			//ListeDesParis 2
-			//listeDesParis
-
-			//valParis.put("user1", new Paris(1,"red1",300,"user1"));
-			//valParis.put("user2", new Paris(2,"blue2",400,"user2"));
-
-			//int somme = listeDesParis.get("1").get("user1").getSomme();
-			//textArea1.append("\nsomme: "+somme);
-
-			//affiche des informations sur les paris
-			//printAllInfoParis();
-
-			/*HashMap<String,Paris> acctyp = new HashMap<String,Paris>();
-			HashMap<String, HashMap<String,Paris>> gens = new HashMap<String,HashMap<String,Paris>>();
-			acctyp.put("user1", nouveauParis);
-			gens.put("1", acctyp);*/
 
 			//ajout dans la liste de selection
 			model.addElement("n." + numeroMatch + " " + equipe1 + " vs " + equipe2);
@@ -410,7 +376,8 @@ public class ServeurUI extends JFrame implements ActionListener {
 
 	/**
 	 * Pour le serveur TCP
-	 *
+	 * Utiliser pour les paris
+	 * Répond au client pour confirmer l'action
 	 */
 	public class ClientHandler implements Runnable {
 		BufferedReader reader;
@@ -460,29 +427,31 @@ public class ServeurUI extends JFrame implements ActionListener {
 						// sinon si name:message/Chat
 						sendToEveryone(message);
 					} else if (data[4].equals("Pari")) {
-						int intNumMatch= Integer.parseInt(data[2]);
+						int intNumMatch = Integer.parseInt(data[2]);
 						boolean a = listeDesMatch.get(intNumMatch).getStatusMatch().equals("PERIODE 3");
 						boolean b = listeDesMatch.get(intNumMatch).getStatusMatch().equals("TERMINE");
-						if((!a) && (!b)){
-						// sinon si name:somme:numMatch:equipe:Pari
-						textArea1.append(data[0] + " : a parié " + data[1] + "$ pour l'équipe " + data[3] + " du match "
-								+ data[2] + "\n");
-						sendToEveryone((data[0] + ": a parié " + data[1] + "$ pour l'équipe " + data[3] + " du match "
-								+ data[2] + "[Confirmation du Serveur]:" + pari));
-						int intEquipe = Integer.parseInt(data[3]);
-						int intSomme = Integer.parseInt(data[1]);
-						textArea1.append("Ajout à la cagnote\n");
-						addBet(data[2], data[0], intEquipe, intSomme);
-						}else{
-							sendToEveryone((data[0] + ": Impossible match en Période 3 ou terminé [Confirmation du Serveur]:" + pari));
-						}	
+						if ((!a) && (!b)) {
+							// sinon si name:somme:numMatch:equipe:Pari
+							textArea1.append(data[0] + " : a parié " + data[1] + "$ pour l'équipe " + data[3]
+									+ " du match " + data[2] + "\n");
+							sendToEveryone((data[0] + ": a parié " + data[1] + "$ pour l'équipe " + data[3]
+									+ " du match " + data[2] + "[Confirmation du Serveur]:" + pari));
+							int intEquipe = Integer.parseInt(data[3]);
+							int intSomme = Integer.parseInt(data[1]);
+							textArea1.append("Ajout à la cagnote\n");
+							addBet(data[2], data[0], intEquipe, intSomme);
+						} else {
+							sendToEveryone((data[0]
+									+ ": Impossible match en Période 3 ou terminé [Confirmation du Serveur]:" + pari));
+						}
 					} else if (data[4].equals("PariInfo")) {
 						//sinon si name:message:equipe:PariInfo
 						textArea1.append(data[0] + " : a demandé des information sur le pari ");
 						//sendToEveryone((data[0] + ": La somme du pari est de 100$:" + pari));
 						//On envoie simplement a la personne qui le demande
 						//String all = printAllInfoParis();
-						sendToOne((data[0] + ":Merci d'attendre la fin de match[Confirmation du Serveur]:" + pari),sock);
+						sendToOne((data[0] + ":Merci d'attendre la fin de match[Confirmation du Serveur]:" + pari),
+								sock);
 					} else {
 
 					}
@@ -524,7 +493,8 @@ public class ServeurUI extends JFrame implements ActionListener {
 	}
 
 	/**
-	 * Pour tester utilser la classe UDPClientConsole
+	 * Lancement du Serveur UDP
+	 * Thread avec pool
 	 *
 	 */
 	public class ServerStartUDP implements Runnable {
@@ -580,11 +550,10 @@ public class ServeurUI extends JFrame implements ActionListener {
 
 	/**
 	 * Envoie d'un message à tous le monde
-	 * 
 	 * @param message
 	 */
 	public void sendToEveryone(String message) {
-		if(serveurRun==1){
+		if (serveurRun == 1) {
 			Iterator it = clientOutputStreams.iterator();
 			while (it.hasNext()) {
 				try {
@@ -595,13 +564,13 @@ public class ServeurUI extends JFrame implements ActionListener {
 					textArea1.append("Erreur envoie aux clients \n");
 				}
 			}
-		}else{
+		} else {
 			textArea1.append("Lancer le serveur pour l'envoie \n");
 		}
 	}
 
 	/**
-	 *  A CORRIGER
+	 *  Envoie a une seule personne
 	 * @param message
 	 * @throws IOException 
 	 */
@@ -611,6 +580,13 @@ public class ServeurUI extends JFrame implements ActionListener {
 		printWriter.flush();
 	}
 
+	/**
+	 * Ajoute un pari et une cagnote
+	 * @param match
+	 * @param user
+	 * @param equipe
+	 * @param somme
+	 */
 	public void addBet(String match, String user, int equipe, int somme) {
 		String userWithMatch = user + ":" + match;
 		Paris valParis = new Paris(equipe, "equipe", somme, userWithMatch);
@@ -619,6 +595,11 @@ public class ServeurUI extends JFrame implements ActionListener {
 		listeCagnotte2.get(intMatch).addParis(user, somme, equipe);
 	}
 
+	/**
+	 * Affiche les informations sur les paris
+	 * Réservé pour le serveur simplement
+	 * @return les informations 
+	 */
 	public String printAllInfoParis() {
 		Set<String> keysListe = listeDesParis2.keySet();
 		String all = "";
@@ -637,15 +618,9 @@ public class ServeurUI extends JFrame implements ActionListener {
 			all = "\n-Somme total " + sGlobal + "$"
 					+ "\n-Si Equipe 1 gagne chaque joueur qui ont choisie l'équipe 1 gagne " + sEquipe1 + "$"
 					+ "\n-Si Equipe 2 gagne chaque joueur qui ont choisie l'équipe 2 gagne " + sEquipe2 + "$";
-			/*
-			textArea1.append("\n-Somme total " + sGlobal +"$");
-			textArea1.append("\n-Si Equipe 1 gagne chaque joueur qui ont choisie l'équipe 1 gagne " + sEquipe1+"$");
-			textArea1.append("\n-Si Equipe 2 gagne chaque joueur qui ont choisie l'équipe 2 gagne " + sEquipe2+"$");
-			*/
+
 		}
 		return all;
 	}
-	
-
 
 }
