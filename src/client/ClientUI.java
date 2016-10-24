@@ -323,10 +323,10 @@ public class ClientUI extends JFrame implements ActionListener {
 					String monNumMatch = Integer.toString(list.getSelectedIndex());
 					sendToServer2(tfPari.getText(), monNumMatch, monEquipe, "Pari");
 				} else {
-					textArea1.append("\nImpossible de voter car Période 3 ou Match Terminé");
+					textArea1.append("\nImpossible de voter car Période 3 ou Match Terminé\n");
 				}
 			} else {
-				textArea1.append("\nSelectionner un match dans la liste au dessus");
+				textArea1.append("\nSelectionner un match dans la liste au dessus\n");
 			}
 		} else if (e.getSource() == btInfoTargetList) {
 			//Bouton Information sur le match sélectionné

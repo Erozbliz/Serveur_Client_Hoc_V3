@@ -232,7 +232,8 @@ public class ServeurUI extends JFrame implements ActionListener {
 			textArea1.setText("Clean\n");
 		} else if (e.getSource() == btPariInformation) {
 			textArea1.append("\nInformation Pari \n");
-			textArea1.append(printAllInfoParis());
+			printAllInfoParis();
+			//textArea1.append(printAllInfoParis());
 		} else if (e.getSource() == btLaunch) {
 			textArea1.append("\nLancement du serveur TCP sur port : " + portTCP);
 			btLaunch.setEnabled(false);
@@ -611,11 +612,13 @@ public class ServeurUI extends JFrame implements ActionListener {
 	 * Réservé pour le serveur simplement
 	 * @return les informations 
 	 */
-	public String printAllInfoParis() {
+	public void printAllInfoParis() {
 		Set<String> keysListe = listeDesParis2.keySet();
 		String all = "";
 		for (String key : keysListe) {
 			System.out.println("-" + key + " " + listeDesParis2.get(key).getNumEquipe() + " "
+					+ listeDesParis2.get(key).getSomme() + "$");
+			textArea1.append("----" + key + " equipe " + listeDesParis2.get(key).getNumEquipe() + ", somme "
 					+ listeDesParis2.get(key).getSomme() + "$");
 		}
 
@@ -629,9 +632,8 @@ public class ServeurUI extends JFrame implements ActionListener {
 			all = "\n-Somme total " + sGlobal + "$"
 					+ "\n-Si Equipe 1 gagne chaque joueur qui ont choisie l'équipe 1 gagne " + sEquipe1 + "$"
 					+ "\n-Si Equipe 2 gagne chaque joueur qui ont choisie l'équipe 2 gagne " + sEquipe2 + "$";
-
+			textArea1.append(all);
 		}
-		return all;
 	}
 
 }
