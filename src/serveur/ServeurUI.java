@@ -50,7 +50,7 @@ public class ServeurUI extends JFrame implements ActionListener {
 
 	//logger log4j voir mylogfile.log
 	private static Logger logger = Logger.getLogger(ServeurUI.class);
-	
+
 	// Serveur
 	int portTCP = 2222;
 	int portUDP = 3333;
@@ -106,7 +106,6 @@ public class ServeurUI extends JFrame implements ActionListener {
 	// Liste des utilisateurs
 	ArrayList clientOutputStreams;
 	ArrayList<String> users;
-
 
 	/**
 	 * Interface
@@ -219,7 +218,6 @@ public class ServeurUI extends JFrame implements ActionListener {
 		logger.info("Lancement du programme Serveur");
 		// Lancement de l'interface
 		new ServeurUI();
-		
 
 	}
 
@@ -398,7 +396,7 @@ public class ServeurUI extends JFrame implements ActionListener {
 				InputStreamReader isReader = new InputStreamReader(sock.getInputStream());
 				reader = new BufferedReader(isReader);
 			} catch (Exception ex) {
-				logger.debug("Probleme dans le Client Handler " +ex);
+				logger.debug("Probleme dans le Client Handler " + ex);
 				textArea1.append("Probleme dans le Client Handler \n");
 			}
 
@@ -466,7 +464,7 @@ public class ServeurUI extends JFrame implements ActionListener {
 				}
 			} catch (Exception ex) {
 				textArea1.append("Connexion perdue. \n");
-				logger.debug("Message reçu par le client erroné "+ex);
+				logger.debug("Message reçu par le client erroné " + ex);
 				ex.printStackTrace();
 				clientOutputStreams.remove(client);
 			}
@@ -496,7 +494,7 @@ public class ServeurUI extends JFrame implements ActionListener {
 					textArea1.append("\n Une connexion à été établie pour les paris \n");
 				}
 			} catch (Exception ex) {
-				logger.debug("Erreur de connexion (port déjà utilisé) "+ex);
+				logger.debug("Erreur de connexion (port déjà utilisé) " + ex);
 				textArea1.append("Erreur de connexion (port déjà utilisé) \n");
 			}
 		}
@@ -549,7 +547,7 @@ public class ServeurUI extends JFrame implements ActionListener {
 				}
 
 			} catch (Exception e) {
-				logger.debug("Error Server "+e);
+				logger.debug("Error Server " + e);
 				System.err.println("Error Server");
 				e.printStackTrace();
 			} finally {
@@ -572,7 +570,7 @@ public class ServeurUI extends JFrame implements ActionListener {
 					writer.println(message); //ecrit dans la console
 					writer.flush();
 				} catch (Exception ex) {
-					logger.debug("Erreur envoie aux clients "+ex);
+					logger.debug("Erreur envoie aux clients " + ex);
 					textArea1.append("Erreur envoie aux clients \n");
 				}
 			}
@@ -625,14 +623,14 @@ public class ServeurUI extends JFrame implements ActionListener {
 
 		for (int j = 0; j < listeCagnotte2.size(); j++) {
 			int sGlobal = listeCagnotte2.get(j).getSommeTotal();
-			int sEquipe1 = listeCagnotte2.get(j).getSommeForEachUserEquipe1();
-			int sEquipe2 = listeCagnotte2.get(j).getSommeForEachUserEquipe2();
+			int sEquipe1 = listeCagnotte2.get(j).getSommeTotalDesGagnant(1);
+			int sEquipe2 = listeCagnotte2.get(j).getSommeTotalDesGagnant(2);
 			System.out.println("-Somme total " + sGlobal + "$");
-			//System.out.println("-Si Equipe 1 gagne chaque joueur qui ont choisie l'équipe 1 gagne " + sEquipe1 + "$");
-			//System.out.println("-Si Equipe 2 gagne chaque joueur qui ont choisie l'équipe 2 gagne " + sEquipe2 + "$");
-			all = "\n-Somme total " + sGlobal + "$"
-					+ "\n-Si Equipe 1 gagne chaque joueur qui ont choisie l'équipe 1 gagne " + sEquipe1 + "$"
-					+ "\n-Si Equipe 2 gagne chaque joueur qui ont choisie l'équipe 2 gagne " + sEquipe2 + "$";
+			System.out.println("-Si Equipe 1 : " + sEquipe1 + "$");
+			System.out.println("-Si Equipe 2 : " + sEquipe2 + "$");
+			all = "\n-Somme total " + sGlobal + "$" + "\n-Si Equipe 1 : " + sEquipe1 + "$" + "\n-Si Equipe 2 : "
+					+ sEquipe2 + "$";
+
 			textArea1.append(all);
 		}
 	}

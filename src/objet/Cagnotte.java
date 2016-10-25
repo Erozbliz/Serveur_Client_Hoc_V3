@@ -54,15 +54,15 @@ public class Cagnotte implements Serializable {
 		}
 		return mySomme;
 	}
-	
+
 	public int getSommeTotalDesGagnant(int numEquipeGagnant) {
 		int mySomme = 0;
-		if(numEquipeGagnant==1){
+		if (numEquipeGagnant == 1) {
 			Set<String> keys = listeUserPourEquipe1.keySet();
 			for (String key : keys) {
 				mySomme = listeUserPourEquipe1.get(key) + mySomme;
 			}
-		}else{
+		} else {
 			Set<String> keys2 = listeUserPourEquipe2.keySet();
 			for (String key : keys2) {
 				mySomme = listeUserPourEquipe2.get(key) + mySomme;
@@ -92,87 +92,85 @@ public class Cagnotte implements Serializable {
 		}
 		return sommeRecuParChacun;
 	}
-	
-	public String getStrListUserEquipe1(){
+
+	public String getStrListUserEquipe1() {
 		Set<String> keys = listeUserPourEquipe1.keySet();
 		String strList = "";
 		for (String key : keys) {
 			//key= key+",";
-			strList = strList + key+",";
+			strList = strList + key + ",";
 		}
 		return strList;
 	}
-	
-	public String getStrListUserEquipe2(){
+
+	public String getStrListUserEquipe2() {
 		Set<String> keys = listeUserPourEquipe2.keySet();
 		String strList = "";
 		for (String key : keys) {
 			//key= key+",";
-			strList = strList + key+",";
+			strList = strList + key + ",";
 		}
 		return strList;
 	}
-	
-	
-	public String getStrListUserEquipe1AvecGain(){
+
+	public String getStrListUserEquipe1AvecGain() {
 		Set<String> keys = listeUserPourEquipe1.keySet();
 		String strList = "";
 		int sommeTotaleGagnant = getSommeTotalDesGagnant(1);
 		//pour controler si il y une somme
 		boolean pasDeSomme = false;
-		if(sommeTotaleGagnant==0){
+		if (sommeTotaleGagnant == 0) {
 			pasDeSomme = true;
 		}
-		
-		int sommeUser=0;
+
+		int sommeUser = 0;
 		float sommeUserRemporte = 0;
 		//key contient le name 
 		for (String key : keys) {
 			//key= key+",";
-			sommeUser= listeUserPourEquipe1.get(key);
-			if(pasDeSomme==false){
-				sommeUserRemporte=getCagnotteRemportee(sommeUser,sommeTotaleGagnant);
+			sommeUser = listeUserPourEquipe1.get(key);
+			if (pasDeSomme == false) {
+				sommeUserRemporte = getCagnotteRemportee(sommeUser, sommeTotaleGagnant);
 			}
-			strList = strList + key+" a "+sommeUserRemporte+",";
+			strList = strList + key + " a " + sommeUserRemporte + ",";
 		}
 		return strList;
 	}
-	
-	public String getStrListUserEquipe2AvecGain(){
+
+	public String getStrListUserEquipe2AvecGain() {
 		Set<String> keys = listeUserPourEquipe2.keySet();
 		String strList = "";
 		int sommeTotaleGagnant = getSommeTotalDesGagnant(2);
 		//pour controler si il y une somme
 		boolean pasDeSomme = false;
-		if(sommeTotaleGagnant==0){
+		if (sommeTotaleGagnant == 0) {
 			pasDeSomme = true;
 		}
-		
-		int sommeUser=0;
+
+		int sommeUser = 0;
 		float sommeUserRemporte = 0;
 		//key contient le name 
 		for (String key : keys) {
 			//key= key+",";
-			sommeUser= listeUserPourEquipe2.get(key);
-			if(pasDeSomme==false){
-				sommeUserRemporte=getCagnotteRemportee(sommeUser,sommeTotaleGagnant);
+			sommeUser = listeUserPourEquipe2.get(key);
+			if (pasDeSomme == false) {
+				sommeUserRemporte = getCagnotteRemportee(sommeUser, sommeTotaleGagnant);
 			}
-			strList = strList + key+" a "+sommeUserRemporte+",";
+			strList = strList + key + " a " + sommeUserRemporte + ",";
 		}
 		return strList;
 	}
-	
-	public float getCagnotteRemportee(int sommeMisee, int sommeTotaleGagnant){
+
+	public float getCagnotteRemportee(int sommeMisee, int sommeTotaleGagnant) {
 		float cagnotte;
-	//	if(sommeTotaleGagnant!=0){
-			int sommeTotal = getSommeTotal();
-			float sommeReversee = (float) (0.75*sommeTotal);
-			float percentage = ((float) sommeMisee) / sommeTotaleGagnant;
-			//float div = (int) (sommeMisee/sommeTotaleGagnant);
-			//int perce = Math.round(percentage);
-			cagnotte = sommeReversee*percentage;
-	//	}
-		System.out.println("-cagnotte " + cagnotte + " sommeReversee"+ sommeReversee+" sommeMisee"+ sommeMisee+ " sommeTotaleGagnant"+sommeTotaleGagnant+ " perce"+percentage);
+		int sommeTotal = getSommeTotal();
+		float sommeReversee = (float) (0.75 * sommeTotal);
+		float percentage = ((float) sommeMisee) / sommeTotaleGagnant;
+		//float div = (int) (sommeMisee/sommeTotaleGagnant);
+		//int perce = Math.round(percentage);
+		cagnotte = sommeReversee * percentage;
+		System.out.println("-cagnotte " + cagnotte + " sommeReversee" + sommeReversee + " sommeMisee" + sommeMisee
+				+ " sommeTotaleGagnant" + sommeTotaleGagnant + " percentage" + percentage);
 		return cagnotte;
 	}
 
