@@ -350,13 +350,14 @@ public class ServeurUI extends JFrame implements ActionListener {
 					textArea1.append("\nMatch nul " + listDesGagnants);
 					sendToEveryone("Serveur:Match nul, liste des gagnants " + listDesGagnants + ":Chat");
 				} else if (butE1 < butE2) {
-					listDesGagnants = listeCagnotte2.get(select).getStrListUserEquipe2();
+					//listDesGagnants = listeCagnotte2.get(select).getStrListUserEquipe2();
+					listDesGagnants = listeCagnotte2.get(select).getStrListUserEquipe2AvecGain();
 					textArea1.append("\nEquipe 2 a gagné " + listDesGagnants);
-					sendToEveryone("Serveur:Equipe 2 a gagné, liste des gagnants" + listDesGagnants + ":Chat");
+					sendToEveryone("Serveur:Equipe 2 a gagné, " + listDesGagnants + ":Chat");
 				} else {
-					listDesGagnants = listeCagnotte2.get(select).getStrListUserEquipe1();
+					listDesGagnants = listeCagnotte2.get(select).getStrListUserEquipe1AvecGain();
 					textArea1.append("\nEquipe 1 a gagné " + listDesGagnants);
-					sendToEveryone("Serveur:Equipe 1 a gagné, liste des gagnants" + listDesGagnants + ":Chat");
+					sendToEveryone("Serveur:Equipe 1 a gagné, " + listDesGagnants + ":Chat");
 				}
 
 			} else {
@@ -624,11 +625,11 @@ public class ServeurUI extends JFrame implements ActionListener {
 
 		for (int j = 0; j < listeCagnotte2.size(); j++) {
 			int sGlobal = listeCagnotte2.get(j).getSommeTotal();
-			int sEquipe1 = listeCagnotte2.get(j).getSommeTotal();
-			int sEquipe2 = listeCagnotte2.get(j).getSommeTotal();
+			int sEquipe1 = listeCagnotte2.get(j).getSommeForEachUserEquipe1();
+			int sEquipe2 = listeCagnotte2.get(j).getSommeForEachUserEquipe2();
 			System.out.println("-Somme total " + sGlobal + "$");
-			System.out.println("-Si Equipe 1 gagne chaque joueur qui ont choisie l'équipe 1 gagne " + sEquipe1 + "$");
-			System.out.println("-Si Equipe 2 gagne chaque joueur qui ont choisie l'équipe 2 gagne " + sEquipe2 + "$");
+			//System.out.println("-Si Equipe 1 gagne chaque joueur qui ont choisie l'équipe 1 gagne " + sEquipe1 + "$");
+			//System.out.println("-Si Equipe 2 gagne chaque joueur qui ont choisie l'équipe 2 gagne " + sEquipe2 + "$");
 			all = "\n-Somme total " + sGlobal + "$"
 					+ "\n-Si Equipe 1 gagne chaque joueur qui ont choisie l'équipe 1 gagne " + sEquipe1 + "$"
 					+ "\n-Si Equipe 2 gagne chaque joueur qui ont choisie l'équipe 2 gagne " + sEquipe2 + "$";
