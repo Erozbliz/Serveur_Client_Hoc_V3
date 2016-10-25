@@ -17,22 +17,34 @@ public final class Tools {
 	 * @return true si int sinon false
 	 */
 	public static boolean isInteger(String s) {
-	    try { 
-	        Integer.parseInt(s); 
-	    } catch(NumberFormatException e) { 
-	        return false; 
-	    } catch(NullPointerException e) {
-	        return false;
-	    }
-	    return true;
+		try {
+			Integer.parseInt(s);
+		} catch (NumberFormatException e) {
+			return false;
+		} catch (NullPointerException e) {
+			return false;
+		}
+		return true;
 	}
-	
-	
+
+	/**
+	*  Génere un nombre aléatoire
+	* @return 156
+	*/
+	public static int randInt() {
+		int min = 0;
+		int max = 7;
+
+		Random r = new Random();
+		int i1 = r.nextInt(max - min + 1) + min;
+		return i1;
+	}
+
 	/**
 	 *  Génere un string aléatoire qui commence par user
 	 * @return user111
 	 */
-	public static String randUser(){
+	public static String randUser() {
 		String user = "user";
 		Random generator = new Random();
 		int i = generator.nextInt(999) + 1;
@@ -40,12 +52,12 @@ public final class Tools {
 		user = user.concat(is);
 		return user;
 	}
-	
+
 	/**
 	 *  Génere un string aléatoire qui contient que des chiffre
 	 * @return 156
 	 */
-	public static String randString(){
+	public static String randString() {
 		String user = "1";
 		Random generator = new Random();
 		int i = generator.nextInt(999) + 1;
@@ -53,14 +65,14 @@ public final class Tools {
 		user = user.concat(is);
 		return user;
 	}
-	
+
 	/**
 	 * 
 	 * @return la date actuelle au format string
 	 */
-	public static String currentStrDate(){
+	public static String currentStrDate() {
 		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-		Date date = new Date(); 
+		Date date = new Date();
 		return dateFormat.format(date);
 	}
 
