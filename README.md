@@ -38,6 +38,6 @@ netstat -ano | find ":2222" & netstat -ano | find ":3333" <br />
 TASKKILL /PID 10856 -f <br />
 
 ## Capture Serveur + Client
-![alt tag](https://github.com/Erozbliz/Serveur_Client_Hoc_V3/tree/master/src/img/Capture3.JPG)
+![alt tag](https://github.com/Erozbliz/Serveur_Client_Hoc_V3/tree/master/src/img/Capture3.png?raw=true)
 
 
