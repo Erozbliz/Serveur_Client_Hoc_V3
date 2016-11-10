@@ -54,6 +54,7 @@ public class ServeurUI extends JFrame implements ActionListener {
 	// Serveur
 	int portTCP = 2222;
 	int portUDP = 3333;
+	static int portHttp = 4444; //Pour le client ajax
 	int serveurRun = 0;
 
 	// Pour Serveur UDP
