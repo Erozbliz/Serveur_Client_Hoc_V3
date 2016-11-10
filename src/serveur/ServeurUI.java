@@ -244,6 +244,10 @@ public class ServeurUI extends JFrame implements ActionListener {
 			Thread serverPoolUDP = new Thread(new ServerStartUDP());
 			serverPoolUDP.start();
 			serveurRun = 1;
+			//Serveur HTTP POST et GET
+			textArea1.append("\nLancement du serveur HTTP sur port : " + portHttp + "\n");
+			HttpServeur httpServeur= new HttpServeur();
+			httpServeur.Start(portHttp);
 		} else if (e.getSource() == btSent) {
 			textArea1.append("\nEnvoie manuel");
 			sendToEveryone("Serveur:Envoie manuel:Chat");

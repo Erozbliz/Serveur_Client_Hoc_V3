@@ -18,8 +18,9 @@ public class HttpServeur{
 		try {
 			this.port = port;
 			server = HttpServer.create(new InetSocketAddress(port), 0);
-			System.out.println("server started at " + port);
-			server.createContext("/", new Handler.RootHandler());
+			System.out.println("SERVEUR HTTP OK" + port);
+			server.createContext("/", new Handler.IndexHandler());
+			server.createContext("/getListMatch", new Handler.GetListMatchHandler());
 			server.setExecutor(null);
 			server.start();
 		} catch (IOException e) {
