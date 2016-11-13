@@ -92,7 +92,7 @@ public class Handler{
 	}
 	
 	
-public static String serialiseListMatchJson(ArrayList<Match> listMatch){
+public static String serialiseListMatchJson3(ArrayList<Match> listMatch){
 		
 		LinkedHashMap<String, JSONArray> jsonOrderedMap = new LinkedHashMap<String, JSONArray>();
 		JSONObject obj = new JSONObject();
@@ -140,7 +140,7 @@ public static String serialiseListMatchJson(ArrayList<Match> listMatch){
 	
 	
 	//pas dans l'ordre
-	public static String serialiseListMatchJson2(ArrayList<Match> listMatch){
+	public static String serialiseListMatchJson(ArrayList<Match> listMatch){
 		
 		JSONObject obj = new JSONObject();
 		// Map obj = new LinkedHashMap();
@@ -153,13 +153,14 @@ public static String serialiseListMatchJson(ArrayList<Match> listMatch){
 			//obj.put("listButEquipe1_"+i, listMatch.get(i).getNameEquipe1() +" / "+listMatch.get(i).getNameEquipe2() ); 
 			JSONArray listArrayInObj = new JSONArray();
 
+			listArrayInObj.add(listMatch.get(i).getNameEquipe1() +" VS "+listMatch.get(i).getNameEquipe2());
 			listArrayInObj.add(listMatch.get(i).getButEquipe1());
 			listArrayInObj.add(listMatch.get(i).getButEquipe2());
 			listArrayInObj.add(listMatch.get(i).getPenaltyEquipe1());
 			listArrayInObj.add(listMatch.get(i).getPenaltyEquipe2());
 			listArrayInObj.add(listMatch.get(i).getDate());
 			listArrayInObj.add(listMatch.get(i).getStatusMatch());
-			obj.put(listMatch.get(i).getNameEquipe1() +" VS "+listMatch.get(i).getNameEquipe2(),listArrayInObj);
+			obj.put(i,listArrayInObj);
 			/*obj.put("listButEquipe1_"+i, listMatch.get(i).getButEquipe1()); 
 			obj.put("listButEquipe2_"+i, listMatch.get(i).getButEquipe2());
 			obj.put("listPenaltyEquipe1_"+i, listMatch.get(i).getPenaltyEquipe1());
