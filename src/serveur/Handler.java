@@ -1,11 +1,15 @@
 package serveur;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.json.simple.JSONArray;
@@ -91,51 +95,70 @@ public class Handler{
 		}
 	}
 	
-	
-public static String serialiseListMatchJson3(ArrayList<Match> listMatch){
-		
-		LinkedHashMap<String, JSONArray> jsonOrderedMap = new LinkedHashMap<String, JSONArray>();
-		JSONObject obj = new JSONObject();
-		// Map obj = new LinkedHashMap();
+	/**
+	 * Route : /postParis
+	 *
+	 */
+	public static class PostParisHandler implements HttpHandler {
 
-		JSONArray listEquipe1 = new JSONArray();
-		JSONArray listEquipe2 = new JSONArray();
-		 
-		
-		for(int i=0;i<listMatch.size();i++){
-			//obj.put("listButEquipe1_"+i, listMatch.get(i).getNameEquipe1() +" / "+listMatch.get(i).getNameEquipe2() ); 
-			JSONArray listArrayInObj = new JSONArray();
+		@Override
+		public void handle(HttpExchange he) throws IOException {
+			System.out.println("PostParisHandler...");
+			Map<String, Object> parameters = new HashMap<String, Object>();
+			InputStreamReader isr = new InputStreamReader(he.getRequestBody(), "utf-8");
+			BufferedReader br = new BufferedReader(isr);
+			String query = br.readLine();
+			parseQuery(query, parameters);
+			// send response
+			String response = "";
+			for (String key : parameters.keySet())
+				response += key + " = " + parameters.get(key) + "\n";
+			he.sendResponseHeaders(200, response.length());
+			OutputStream os = he.getResponseBody();
+			os.write(response.toString().getBytes());
+			os.close();
 
-			listArrayInObj.add(listMatch.get(i).getButEquipe1());
-			listArrayInObj.add(listMatch.get(i).getButEquipe2());
-			listArrayInObj.add(listMatch.get(i).getPenaltyEquipe1());
-			listArrayInObj.add(listMatch.get(i).getPenaltyEquipe2());
-			listArrayInObj.add(listMatch.get(i).getDate());
-			listArrayInObj.add(listMatch.get(i).getStatusMatch());
-			jsonOrderedMap.put(listMatch.get(i).getNameEquipe1() +" VS "+listMatch.get(i).getNameEquipe2(),listArrayInObj);
-			/*obj.put("listButEquipe1_"+i, listMatch.get(i).getButEquipe1()); 
-			obj.put("listButEquipe2_"+i, listMatch.get(i).getButEquipe2());
-			obj.put("listPenaltyEquipe1_"+i, listMatch.get(i).getPenaltyEquipe1());
-			obj.put("listPenaltyEquipe2_"+i, listMatch.get(i).getPenaltyEquipe2());*/
-			/*for(int j=0;j<listMatch.get(i).getListeButEquipe1().size();j++){
-				listEquipe1.add(listMatch.get(i).getListeButEquipe1().get(i));
-			}
-			for(int j=0;j<listMatch.get(i).getListeButEquipe2().size();j++){
-				listEquipe2.add(listMatch.get(i).getListeButEquipe2().get(i));
-			}
-			obj.put("listEquipe1_"+i, listEquipe1);
-			obj.put("listEquipe2_"+i, listEquipe2);*/
 		}
-		
-		JSONObject orderedJson = new JSONObject(jsonOrderedMap);
-		//JSONArray jsonArray = new JSONArray(Arrays.asList(orderedJson));
-
-		
-		//obj.put("list", response);
-		String responseStr = orderedJson.toJSONString();
-		return responseStr;
-		
 	}
+	
+	public static void parseQuery(String query, Map<String, Object> parameters) throws UnsupportedEncodingException {
+
+		if (query != null) {
+			String pairs[] = query.split("[&]");
+
+			for (String pair : pairs) {
+				String param[] = pair.split("[=]");
+
+				String key = null;
+				String value = null;
+				if (param.length > 0) {
+					key = URLDecoder.decode(param[0], System.getProperty("file.encoding"));
+				}
+
+				if (param.length > 1) {
+					value = URLDecoder.decode(param[1], System.getProperty("file.encoding"));
+				}
+
+				if (parameters.containsKey(key)) {
+					Object obj = parameters.get(key);
+					if (obj instanceof List<?>) {
+						List<String> values = (List<String>) obj;
+						values.add(value);
+					} else if (obj instanceof String) {
+						List<String> values = new ArrayList<String>();
+						values.add((String) obj);
+						values.add(value);
+						parameters.put(key, values);
+					}
+				} else {
+					parameters.put(key, value);
+				}
+			}
+		}
+	}
+	
+	
+
 	
 	
 	

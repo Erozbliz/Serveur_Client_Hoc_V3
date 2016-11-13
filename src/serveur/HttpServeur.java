@@ -21,6 +21,7 @@ public class HttpServeur{
 			System.out.println("SERVEUR HTTP OK" + port);
 			server.createContext("/", new Handler.IndexHandler());
 			server.createContext("/getListMatch", new Handler.GetListMatchHandler());
+			server.createContext("/postParis", new Handler.PostParisHandler());
 			server.setExecutor(null);
 			server.start();
 		} catch (IOException e) {
