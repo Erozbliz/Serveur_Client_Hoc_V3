@@ -111,8 +111,17 @@ public class Handler{
 			parseQuery(query, parameters);
 			// send response
 			String response = "";
+			// somme = 44 match = 0 user = user21 equipe = 1
+			String mySomme = (String) parameters.get("somme");
+			String myMatch = (String) parameters.get("match");
+			String myUser = (String) parameters.get("user");
+			String myEquipe = (String) parameters.get("equipe");
+			response = myUser+ " "+mySomme +"$ Match "+myMatch+"Equipe "+myEquipe;
+			ServeurUI.addBet(myMatch, myUser,  Integer.parseInt(myEquipe), Integer.parseInt(mySomme));
+			
+			/*
 			for (String key : parameters.keySet())
-				response += key + " = " + parameters.get(key) + "\n";
+				response += key + " = " + parameters.get(key) + "\n";*/
 			he.sendResponseHeaders(200, response.length());
 			OutputStream os = he.getResponseBody();
 			os.write(response.toString().getBytes());

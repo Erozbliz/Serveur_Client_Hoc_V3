@@ -603,7 +603,7 @@ public class ServeurUI extends JFrame implements ActionListener {
 	 * @param equipe
 	 * @param somme
 	 */
-	public void addBet(String match, String user, int equipe, int somme) {
+	public static void addBet(String match, String user, int equipe, int somme) {
 		String userWithMatch = user + ":" + match;
 		Paris valParis = new Paris(equipe, "equipe", somme, userWithMatch);
 		listeDesParis2.put(userWithMatch, valParis);
