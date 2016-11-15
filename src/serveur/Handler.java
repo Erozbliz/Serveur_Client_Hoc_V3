@@ -116,7 +116,7 @@ public class Handler{
 			String myMatch = (String) parameters.get("match");
 			String myUser = (String) parameters.get("user");
 			String myEquipe = (String) parameters.get("equipe");
-			response = myUser+ " "+mySomme +"$ Match "+myMatch+"Equipe "+myEquipe;
+			response = myUser+ " "+mySomme +"$ Match "+myMatch+" Equipe "+myEquipe;
 			ServeurUI.addBet(myMatch, myUser,  Integer.parseInt(myEquipe), Integer.parseInt(mySomme));
 			
 			/*
