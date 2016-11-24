@@ -75,6 +75,28 @@ public class Handler{
 	}
 	
 	/**
+	 * Permet d'avoir le dernier evenement
+	 * Route  /getEvent
+	 */
+	public static class GetEventHandler implements HttpHandler {
+		@Override
+		public void handle(HttpExchange argHttpExhange) throws IOException {
+			URI requestedUri = argHttpExhange.getRequestURI();
+			String query = requestedUri.getRawQuery();
+
+
+			String responseStr = ServeurUI.lastEvent;
+			
+
+
+			argHttpExhange.sendResponseHeaders(200, responseStr.length());
+			OutputStream os = argHttpExhange.getResponseBody();
+			os.write(responseStr.toString().getBytes());
+			os.close();
+		}
+	}
+	
+	/**
 	 * 
 	 *
 	 */
