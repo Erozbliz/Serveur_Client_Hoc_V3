@@ -139,7 +139,17 @@ public class Handler{
 			String myUser = (String) parameters.get("user");
 			String myEquipe = (String) parameters.get("equipe");
 			response = myUser+ " "+mySomme +"$ Match "+myMatch+" Equipe "+myEquipe;
-			ServeurUI.addBet(myMatch, myUser,  Integer.parseInt(myEquipe), Integer.parseInt(mySomme));
+			//ServeurUI.addBet(myMatch, myUser,  Integer.parseInt(myEquipe), Integer.parseInt(mySomme)); //vérifier que le match n'est pas deja TERMINER
+
+			boolean a = ServeurUI.listeDesMatch.get(Integer.parseInt(myMatch)).getStatusMatch().equals("PERIODE 3");
+			boolean b = ServeurUI.listeDesMatch.get(Integer.parseInt(myMatch)).getStatusMatch().equals("TERMINE");
+			System.out.println(response);
+
+			if ((!a) && (!b)) {
+				ServeurUI.addBet(myMatch, myUser,  Integer.parseInt(myEquipe), Integer.parseInt(mySomme)); //vérifier que le match n'est pas deja TERMINER
+			}else{
+				response = "Impossible Match terminer ou en periode 3";
+			}
 			
 			/*
 			for (String key : parameters.keySet())

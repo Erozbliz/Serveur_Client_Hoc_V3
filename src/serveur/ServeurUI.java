@@ -96,6 +96,7 @@ public class ServeurUI extends JFrame implements ActionListener {
 	JButton btFinMatch = new JButton("Fin du match");
 	
 	static String lastEvent = "";
+	static String lastParisMatchTermine = "";
 
 	// Pour modifier le textArea d'une autre classe (ServeurUI.appendToTextArea("texte");)
 	public static void appendToTextArea(String text) {
@@ -273,7 +274,7 @@ public class ServeurUI extends JFrame implements ActionListener {
 			if (select != -1) {
 				textArea1.append("\n" + crDate + " But equipe 1 du match n." + select);
 				listeDesMatch.get(select).butPourEquipe1(crDate); //ajoute un but + date
-				lastEvent =  crDate + " But equipe 1 du match n." + select; //pour http evenement
+				lastEvent =  crDate + " But equipe 1 du match n." + select+ ":::"+lastParisMatchTermine; //pour http evenement
 			} else {
 				textArea1.append("\nSelectionner un match");
 			}
@@ -284,7 +285,7 @@ public class ServeurUI extends JFrame implements ActionListener {
 			if (select != -1) {
 				textArea1.append("\n" + crDate + " But equipe 2 du match n." + select);
 				listeDesMatch.get(select).butPourEquipe2(crDate); //ajoute un but
-				lastEvent =  crDate + " But equipe 2 du match n." + select; //pour http evenement
+				lastEvent =  crDate + " But equipe 2 du match n." + select+ ":::"+lastParisMatchTermine; //pour http evenement
 			} else {
 				textArea1.append("\nSelectionner un match");
 			}
@@ -294,7 +295,7 @@ public class ServeurUI extends JFrame implements ActionListener {
 			if (select != -1) {
 				textArea1.append("\n" + crDate + " Pénalty equipe 1 du match n." + select);
 				listeDesMatch.get(select).penaltyPourEquipe1(); //ajoute un pénalty
-				lastEvent =  crDate + " Penalty equipe 1 du match n." + select; //pour http evenement
+				lastEvent =  crDate + " Penalty equipe 1 du match n." + select+ ":::"+lastParisMatchTermine; //pour http evenement
 			} else {
 				textArea1.append("\nSelectionner un match");
 			}
@@ -304,7 +305,7 @@ public class ServeurUI extends JFrame implements ActionListener {
 			if (select != -1) {
 				textArea1.append("\n" + crDate + " Pénalty equipe 2 du match n." + select);
 				listeDesMatch.get(select).penaltyPourEquipe2(); //ajoute un but
-				lastEvent =  crDate + " Penalty equipe 2 du match n." + select; //pour http evenement
+				lastEvent =  crDate + " Penalty equipe 2 du match n." + select+ ":::"+lastParisMatchTermine; //pour http evenement
 			} else {
 				textArea1.append("\nSelectionner un match");
 			}
@@ -343,6 +344,7 @@ public class ServeurUI extends JFrame implements ActionListener {
 			int select = list.getSelectedIndex();
 			if (select != -1) {
 				listeDesMatch.get(select).setStatusMatch("PERIODE 1");
+				lastEvent = "PERIODE 1 Match" + select + ":::"+lastParisMatchTermine; //pour http evenement
 			} else {
 				textArea1.append("\nSelectionner un match");
 			}
@@ -358,18 +360,21 @@ public class ServeurUI extends JFrame implements ActionListener {
 							+ listeCagnotte2.get(select).getStrListUserEquipe2();
 					textArea1.append("\nMatch nul " + listDesGagnants);
 					sendToEveryone("Serveur:Match nul, liste des gagnants " + listDesGagnants + ":Chat");
-					lastEvent = "Serveur:Match nul, liste des gagnants " + listDesGagnants + ":Chat"; //pour http evenement
+					lastParisMatchTermine = listDesGagnants;
+					lastEvent = "Match nul, liste des gagnants " + listDesGagnants + ":::"+lastParisMatchTermine; //pour http evenement
 				} else if (butE1 < butE2) {
 					//listDesGagnants = listeCagnotte2.get(select).getStrListUserEquipe2();
 					listDesGagnants = listeCagnotte2.get(select).getStrListUserEquipe2AvecGain();
 					textArea1.append("\nEquipe 2 a gagné " + listDesGagnants);
 					sendToEveryone("Serveur:Equipe 2 a gagné, " + listDesGagnants + ":Chat");
-					lastEvent = "Serveur:Gagnant Equipe 2 , " + listDesGagnants + ":Chat"; //pour http evenement
+					lastParisMatchTermine = listDesGagnants;
+					lastEvent = "Gagnant Equipe 2 , " + listDesGagnants + ":::"+lastParisMatchTermine; //pour http evenement
 				} else {
 					listDesGagnants = listeCagnotte2.get(select).getStrListUserEquipe1AvecGain();
 					textArea1.append("\nEquipe 1 a gagné " + listDesGagnants);
 					sendToEveryone("Serveur:Equipe 1 a gagné, " + listDesGagnants + ":Chat");
-					lastEvent = "Serveur:Gagnant Equipe 1 , " + listDesGagnants + ":Chat"; //pour http evenement
+					lastParisMatchTermine = listDesGagnants;
+					lastEvent = "Gagnant Equipe 1 , " + listDesGagnants + ":::"+lastParisMatchTermine; //pour http evenement
 				}
 
 			} else {
@@ -379,6 +384,7 @@ public class ServeurUI extends JFrame implements ActionListener {
 			int select = list.getSelectedIndex();
 			if (select != -1) {
 				listeDesMatch.get(select).setStatusMatch("PERIODE 2");
+				lastEvent = "PERIODE 2 Match" + select + ":::"+lastParisMatchTermine; //pour http evenement
 			} else {
 				textArea1.append("\nSelectionner un match");
 			}
@@ -386,6 +392,7 @@ public class ServeurUI extends JFrame implements ActionListener {
 			int select = list.getSelectedIndex();
 			if (select != -1) {
 				listeDesMatch.get(select).setStatusMatch("PERIODE 3");
+				lastEvent = "PERIODE 3 Match" + select + ":::"+lastParisMatchTermine; //pour http evenement
 			} else {
 				textArea1.append("\nSelectionner un match");
 			}
