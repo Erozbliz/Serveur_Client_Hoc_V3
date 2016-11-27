@@ -248,9 +248,10 @@ public class ServeurUI extends JFrame implements ActionListener {
 			serverPoolUDP.start();
 			serveurRun = 1;
 			//Serveur HTTP POST et GET
-			textArea1.append("\nLancement du serveur HTTP sur port : " + portHttp + "\n");
-			HttpServeur httpServeur= new HttpServeur();
-			httpServeur.Start(portHttp);
+			//HttpServeur httpServeur= new HttpServeur(); //avant sans thread
+			//httpServeur.Start(portHttp); //avant sans thread
+			Thread serverHttp = new Thread(new ServerStartHTTP());
+			serverHttp.start();
 		} else if (e.getSource() == btSent) {
 			textArea1.append("\nEnvoie manuel");
 			sendToEveryone("Serveur:Envoie manuel:Chat");
@@ -514,6 +515,32 @@ public class ServeurUI extends JFrame implements ActionListener {
 					listener.start();
 					textArea1.append("\n Une connexion à été établie pour les paris \n");
 				}
+			} catch (Exception ex) {
+				logger.debug("Erreur de connexion (port déjà utilisé) " + ex);
+				textArea1.append("Erreur de connexion (port déjà utilisé) \n");
+			}
+		}
+	}
+	
+	/**
+	 * Protocol HTTP (Socket)
+	 * pour http post et get Permet de lancer le serveur
+	 *
+	 */
+	public class ServerStartHTTP implements Runnable {
+		@Override
+		public void run() {
+			try {
+					textArea1.append("\nLancement du serveur HTTP sur port : " + portHttp + "\n");
+					HttpServeur httpServeur= new HttpServeur();
+					Thread monitorThread = new Thread(httpServeur);
+					monitorThread.start();
+					
+					//HttpServeur httpServeur= new HttpServeur();
+					/*ReponseClient rc = new ReponseClient(serverSocket,requestPacket); 
+					Thread monitorThread = new Thread(rc);
+					monitorThread.start();*/
+
 			} catch (Exception ex) {
 				logger.debug("Erreur de connexion (port déjà utilisé) " + ex);
 				textArea1.append("Erreur de connexion (port déjà utilisé) \n");

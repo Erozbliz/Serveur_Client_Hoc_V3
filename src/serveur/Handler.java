@@ -26,7 +26,8 @@ import objet.Match;
  * http://www.java2s.com/Code/Jar/h/Downloadhttp20070405jar.htm
  *
  */
-public class Handler{
+public class Handler implements Runnable{
+	
 	
 	
 	/**
@@ -96,26 +97,6 @@ public class Handler{
 		}
 	}
 	
-	/**
-	 * 
-	 *
-	 */
-	public static class GetListParisHandler implements HttpHandler {
-		@Override
-		public void handle(HttpExchange argHttpExhange) throws IOException {
-			Map<String, Object> parameters = new HashMap<String, Object>();
-			URI requestedUri = argHttpExhange.getRequestURI();
-			String query = requestedUri.getRawQuery();
-			
-			String response = "sssssssssss";
-			for (String key : parameters.keySet())
-				response += key + " = " + parameters.get(key) + "\n";
-			argHttpExhange.sendResponseHeaders(200, response.length());
-			OutputStream os = argHttpExhange.getResponseBody();
-			os.write(response.toString().getBytes());
-			os.close();
-		}
-	}
 	
 	/**
 	 * Route : /postParis
@@ -242,6 +223,14 @@ public class Handler{
 		//obj.put("list", response);
 		String responseStr = obj.toJSONString();
 		return responseStr;
+	}
+	
+	
+
+	@Override
+	public void run() {
+		// TODO Auto-generated method stub
+		
 	}
 
 	
