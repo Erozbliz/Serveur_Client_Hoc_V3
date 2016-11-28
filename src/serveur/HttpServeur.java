@@ -15,12 +15,12 @@ public class HttpServeur implements Runnable{
 	public HttpServer server;
 	public int portThread = ServeurUI.portHttp;
 
-	//Méthode sans thread
+	//Méthode sans thread (PAS UTILISE) VOIR METHODE AVEC LE THREAD EN BAS
 	public void Start(int port) {
 		try {
 			this.port = port;
 			server = HttpServer.create(new InetSocketAddress(port), 0);
-			System.out.println("SERVEUR HTTP OK" + port);
+			//System.out.println("SERVEUR HTTP OK" + port);
 			server.createContext("/", new Handler.IndexHandler());
 			server.createContext("/getListMatch", new Handler.GetListMatchHandler());
 			server.createContext("/postParis", new Handler.PostParisHandler());
@@ -42,7 +42,10 @@ public class HttpServeur implements Runnable{
 	public void run() {
 		try {
 			server = HttpServer.create(new InetSocketAddress(portThread), 0);
-			System.out.println("SERVEUR HTTP OK" + port);
+			System.out.println("SERVEUR HTTP OK localhost ou 127.0.0.1:" + portThread);
+			System.out.println("/");
+			System.out.println("/getListMatch");
+			System.out.println("/postParis");
 			server.createContext("/", new Handler.IndexHandler());
 			server.createContext("/getListMatch", new Handler.GetListMatchHandler());
 			server.createContext("/postParis", new Handler.PostParisHandler());
