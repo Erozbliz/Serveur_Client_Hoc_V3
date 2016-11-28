@@ -51,6 +51,9 @@ public class Handler implements Runnable{
 		@Override
 		public void handle(HttpExchange argHttpExhange) throws IOException {
 			Map<String, Object> parameters = new HashMap<String, Object>();
+			
+			
+			//argHttpExhange.getRequestHeaders().add("Access-Control-Allow-Origin", "*");
 			URI requestedUri = argHttpExhange.getRequestURI();
 			String query = requestedUri.getRawQuery();
 			
@@ -68,6 +71,7 @@ public class Handler implements Runnable{
 			
 			/*for (String key : parameters.keySet())
 				response += key + " = " + parameters.get(key) + "\n";*/
+			argHttpExhange.getResponseHeaders().add("Access-Control-Allow-Origin", "*"); //CORS
 			argHttpExhange.sendResponseHeaders(200, responseStr.length());
 			OutputStream os = argHttpExhange.getResponseBody();
 			os.write(responseStr.toString().getBytes());
@@ -85,11 +89,9 @@ public class Handler implements Runnable{
 			URI requestedUri = argHttpExhange.getRequestURI();
 			String query = requestedUri.getRawQuery();
 
-
 			String responseStr = ServeurUI.lastEvent;
-			
 
-
+			argHttpExhange.getResponseHeaders().add("Access-Control-Allow-Origin", "*"); //CORS
 			argHttpExhange.sendResponseHeaders(200, responseStr.length());
 			OutputStream os = argHttpExhange.getResponseBody();
 			os.write(responseStr.toString().getBytes());
@@ -135,6 +137,7 @@ public class Handler implements Runnable{
 			/*
 			for (String key : parameters.keySet())
 				response += key + " = " + parameters.get(key) + "\n";*/
+			he.getResponseHeaders().add("Access-Control-Allow-Origin", "*"); //CORS
 			he.sendResponseHeaders(200, response.length());
 			OutputStream os = he.getResponseBody();
 			os.write(response.toString().getBytes());
@@ -143,6 +146,12 @@ public class Handler implements Runnable{
 		}
 	}
 	
+	/**
+	 * Utilisé par le POST afin de récupérer le pari du client et de désérialiser son contenu
+	 * @param query
+	 * @param parameters
+	 * @throws UnsupportedEncodingException
+	 */
 	public static void parseQuery(String query, Map<String, Object> parameters) throws UnsupportedEncodingException {
 
 		if (query != null) {
@@ -184,7 +193,11 @@ public class Handler implements Runnable{
 	
 	
 	
-	//pas dans l'ordre
+	/**
+	 *  Sérialization du JSON
+	 * @param listMatch
+	 * @return
+	 */
 	public static String serialiseListMatchJson(ArrayList<Match> listMatch){
 		
 		JSONObject obj = new JSONObject();
