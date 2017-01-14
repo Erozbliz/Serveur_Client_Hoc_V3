@@ -29,6 +29,11 @@ au pro rata de leur mise entre les gagnants.
 
 
 ## Installation
+Dossier "client" contient le client<br />
+Dossier "serveur" contient le serveur<br />
+Lancement :<br />
+ClientUI.java<br />
+ServeurUI.java<br />
 
 
 ## Informations complémentaires
@@ -38,6 +43,7 @@ netstat -ano | find ":2222" & netstat -ano | find ":3333" <br />
 TASKKILL /PID 10856 -f <br />
 
 ## Capture Serveur + Client
-![alt tag](https://github.com/Erozbliz/Serveur_Client_Hoc_V3/tree/master/src/img/Capture3.png?raw=true)
+![alt tag](https://github.com/Erozbliz/Serveur_Client_Hoc_V3/blob/master/src/img/c.jpg?raw=true)
+
 
 
